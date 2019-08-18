@@ -1,0 +1,4 @@
+name = "ListUtil"
+uuid = "b2a72b7e-c1ef-11e9-3a87-6ddc5900c366"
+authors = ["johti <johti17@liu.se>"]
+version = "0.1.0"
