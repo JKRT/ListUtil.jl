@@ -467,7 +467,7 @@ Comp = Function
 
 MapFunc = Function
 
-import MetaModelica.ArrayUtil
+import ArrayUtil
 using MetaModelica.Dangerous: listReverseInPlace, arrayGetNoBoundsChecking, arrayUpdateNoBoundsChecking, arrayCreateNoInit
 import MetaModelica.Dangerous
 import DoubleEnded
