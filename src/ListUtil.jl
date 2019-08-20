@@ -4666,13 +4666,10 @@ function removeOnTrue(inValue::VT, inCompFunc::CompFunc, inList::List{T})  where
   outList
 end
 
-@ExtendedFunction select filterOnTrue()
-
-@ExtendedFunction select1 filter1OnTrue()
-
-@ExtendedFunction select1r filter1rOnTrue()
-
-@ExtendedFunction select2 filter2OnTrue()
+select = filterOnTrue
+select1 = filter1OnTrue
+select1r = filter1rOnTrue
+select2 = filter2OnTrue
 
 #= This function retrieves the first element of a list for which the passed
 function evaluates to true. =#
@@ -5152,8 +5149,6 @@ function map1FoldSplit(inList::List{TI}, inMapFunc::MapFunc, inFoldFunc::FoldFun
   (outList, outResult)
 end
 
-@ExtendedFunction accumulateMap accumulateMapAccum()
-
 #= Takes a list and a function. The function is applied to each element in the
 list, and the function is itself responsible for adding elements to the
 result list. =#
@@ -5171,13 +5166,14 @@ element of the list, and the function is itself responsible for adding
 elements to the result list. =#
 function accumulateMapAccum(inList::List{TI}, inMapFunc::MapFunc)  where {TI, TO}
   local outList::List{TO} = nil
-
   for e in inList
     outList = inMapFunc(e, outList)
   end
   outList = listReverse(outList)
   outList
 end
+
+const accumulateMap = accumulateMapAccum
 
 #= Takes a list, a function, an extra argument, and a result list. The function
 is applied to each element of the list, and the function is itself responsible
@@ -5192,8 +5188,6 @@ function accumulateMapAccum1(inList::List{TI}, inMapFunc::MapFunc, inArg::ArgT1)
   outList
 end
 
-@ExtendedFunction accumulateMapFold accumulateMapFoldAccum()
-
 function accumulateMapFoldAccum(inList::List{TI}, inFunc::FuncType, inFoldArg::FT)  where {TI, TO, FT}
   local outFoldArg::FT = inFoldArg
   local outList::List{TO} = nil
@@ -5204,6 +5198,8 @@ function accumulateMapFoldAccum(inList::List{TI}, inFunc::FuncType, inFoldArg::F
   outList = listReverse(outList)
   (outList, outFoldArg)
 end
+
+const accumulateMapFold = accumulateMapFoldAccum
 
 function first2FromTuple3(inTuple::Tuple{T, T, T})  where {T}
   local outList::List{T}
