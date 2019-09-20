@@ -2383,8 +2383,8 @@ end
 
 #= Takes a list, a function and one extra argument, and creates a new list
 by applying the function to each element of the list. =#
-function map1(inList::List{TI}, inMapFunc::MapFunc, inArg1::ArgT1)  where {TI, TO, ArgT1}
-  local outList::List{TO}
+function map1(inList::List{TI}, inMapFunc::MapFunc, inArg1::ArgT1)  where {TI, ArgT1}
+  local outList::List{Any}
 
   outList = list(inMapFunc(e, inArg1) for e in inList)
   outList
@@ -2420,12 +2420,12 @@ end
 
 #= Takes a list and a function, and creates two new lists by applying the
 function to each element of the list. =#
-function map1_2(inList::List{TI}, inFunc::MapFunc, inArg1::ArgT1)  where {TI, TO1, TO2, ArgT1}
-  local outList2::List{TO2} = nil
-  local outList1::List{TO1} = nil
+function map1_2(inList::List{TI}, inFunc::MapFunc, inArg1::ArgT1)  where {TI, ArgT1}
+  local outList2::List{Any} = nil
+  local outList1::List{Any} = nil
 
-  local e1::TO1
-  local e2::TO2
+  local e1::Any
+  local e2::Any
 
   for e in inList
     (e1, e2) = inFunc(e, inArg1)
