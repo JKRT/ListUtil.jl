@@ -2202,8 +2202,8 @@ end
 
 #= Takes a list and a function, and creates a new list by applying the function
 to each element of the list. =#
-function map(inList::List{TI}, inFunc::MapFunc)  where {TI, TO}
-  local outList::List{TO}
+function map(inList::List{TI}, inFunc::MapFunc)  where {TI}
+  local outList::List{Any}
 
   outList = list(inFunc(e) for e in inList)
   outList
