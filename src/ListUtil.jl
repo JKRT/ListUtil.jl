@@ -2202,8 +2202,8 @@ end
 
 #= Takes a list and a function, and creates a new list by applying the function
 to each element of the list. =#
-function map(inList::List{TI}, inFunc::MapFunc)  where {TI, TO}
-  local outList::List{TO}
+function map(inList::List{TI}, inFunc::MapFunc)  where {TI}
+  local outList::List{Any}
 
   outList = list(inFunc(e) for e in inList)
   outList
@@ -2403,8 +2403,8 @@ end
 #= Takes a list, a function and one extra argument, and creates a new list
 by applying the function to each element of the list. The given map
 function has it's arguments reversed compared to map1. =#
-function map1r(inList::List{TI}, inFunc::MapFunc, inArg1::ArgT1)  where {TI, TO, ArgT1}
-  local outList::List{TO}
+function map1r(inList::List{TI}, inFunc::MapFunc, inArg1::ArgT1)  where {TI, ArgT1}
+  local outList::List{Any}
 
   outList = list(inFunc(inArg1, e) for e in inList)
   outList
