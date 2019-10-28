@@ -28,449 +28,46 @@
 * See the full OSMC Public License conditions for more details.
 *
 */ =#
-
-
 module ListUtil
 
 using MetaModelica
 #= ExportAll is not good practice but it makes it so that we do not have to write export after each function :( =#
 using ExportAll
-  #= Necessary to write declarations for your uniontypes until Julia adds support for mutually recursive types =#
-
-CompFunc = Function
-
-CompFunc = Function
-
-Predicate = Function
-
-CompareFunc = Function
-
-CompareFunc = Function
-
-CompareFunc = Function
-
-CompareFunc = Function
-
-CompareFunc = Function
-
-CompareFunc = Function
-
-CompareFunc = Function
-
-CompareFunc = Function
-
-CompareFunc = Function
-
-CompFunc = Function
-
-CompFunc = Function
-
-PredicateFunc = Function
-
-PredicateFunc = Function
-
-PredicateFunc = Function
-
-CompFunc = Function
-
-MapFunc = Function
-
-CompFunc = Function
-
-CompFunc = Function
-
-CompFunc = Function
-
-CompFunc = Function
-
-CompFunc = Function
-
-CompFunc = Function
-
-CompFunc = Function
-
-CompFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc1 = Function
-MapFunc2 = Function
-
-MapFunc1 = Function
-MapFunc2 = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
 
 ApplyFunc = Function
+Comp = Function
+CompFunc = Function
+CompareFunc = Function
+EqFunc = Function
+FilterFunc = Function
+FilterMapFunc = Function
+FindFunc = Function
+FindMapFunc = Function
 FoldFunc = Function
-
-ApplyFunc = Function
-FoldFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
+FuncType = Function
+GenerateFunc = Function
 MapBFunc = Function
 MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-FoldFunc = Function
-
-FoldFunc = Function
-
-FoldFunc = Function
-
-FoldFunc = Function
-
-FoldFunc = Function
-
-FoldFunc = Function
-
-FoldFunc = Function
-
-FoldFunc = Function
-
-FoldFunc = Function
-
-FoldFunc = Function
-
-FoldFunc = Function
-
-FoldFunc = Function
-
-FoldFunc = Function
-
-FoldFunc = Function
-
-FoldFunc = Function
-
-FoldFunc = Function
-
-FoldFunc = Function
-
-FoldFunc = Function
-
-FoldFunc = Function
-
-FoldFunc = Function
-
-FuncType = Function
-
-FuncType = Function
-
-FuncType = Function
-
-FuncType = Function
-
-FuncType = Function
-
-FuncType = Function
-
-FuncType = Function
-
-FuncType = Function
-
-FuncType = Function
-
-FuncType = Function
-
-FuncType = Function
-
-FuncType = Function
-
-FuncType = Function
-
-FuncType = Function
-
-FoldFunc = Function
-
-ReduceFunc = Function
-
-ReduceFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-FoldFunc = Function
-
-FoldFunc = Function
-
-FoldFunc = Function
-
-FoldFunc = Function
-
-FoldFunc = Function
-
-FuncType = Function
-
+MapFunc1 = Function
+MapFunc2 = Function
 PredFunc = Function
-
-PredFunc = Function
-
-CompFunc = Function
-
-CompFunc = Function
-
-FindFunc = Function
-
-FindFunc = Function
-
-FindFunc = Function
-
-FilterFunc = Function
-
-FilterFunc = Function
-
-FilterFunc = Function
-
-FilterMapFunc = Function
-
-FilterMapFunc = Function
-
-FilterFunc = Function
-
-FilterFunc = Function
-
-FilterFunc = Function
-
-FilterFunc = Function
-
-FilterFunc = Function
-
-FilterFunc = Function
-
-FilterFunc = Function
-
-FilterFunc = Function
+Predicate = Function
+PredicateFunc = Function
+ReduceFunc = Function
+SelectFunc = Function
 UpdateFunc = Function
-
-FilterFunc = Function
-
-FilterFunc = Function
-
-CompFunc = Function
-
-SelectFunc = Function
-
-SelectFunc = Function
-
-SelectFunc = Function
-
-SelectFunc = Function
-
-CompareFunc = Function
-
-FuncType = Function
-
-FuncType = Function
-
-GenerateFunc = Function
-
-GenerateFunc = Function
-
-MapFunc = Function
-FoldFunc = Function
-
-MapFunc = Function
-FoldFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-FuncType = Function
-
-FuncType = Function
-
-FuncType = Function
-
-FuncType = Function
-
-FuncType = Function
-
-FuncType = Function
-
-FuncType = Function
-
-EqFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-MapFunc = Function
-
-CompFunc = Function
-
-PredFunc = Function
-
-FilterFunc = Function
-
-FilterFunc = Function
-
-FindMapFunc = Function
-
-Comp = Function
-
-MapFunc = Function
 
 import ArrayUtil
 using MetaModelica.Dangerous: listReverseInPlace, arrayGetNoBoundsChecking, arrayUpdateNoBoundsChecking, arrayCreateNoInit
 import MetaModelica.Dangerous
 import DoubleEnded
+
+TO= Any
+TO1 = Any
+TO2 = Any
+TO3 = Any
+TO4 = Any
+TO5 = Any
 
 #= Creates a list from an element. =#
 function create(inElement::T)  where {T}
@@ -488,7 +85,6 @@ end
 Example: fill(2, 3) => {2, 2, 2} =#
 function fill(inElement::T, inCount::ModelicaInteger)  where {T}
   local outList::List{T} = nil
-
   local i::ModelicaInteger = 0
 
   while i < inCount
@@ -868,7 +464,6 @@ end
 The result is a sorted list in reverse order. =#
 function insertListSorted1(inList::List{T}, inList2::List{T}, inCompFunc::CompareFunc, inResultList::List{T})  where {T}
   local outResultList::List{T}
-
   local listRest::List{T}
   local listRest2::List{T}
   local tmpResultList::List{T}
@@ -1769,7 +1364,7 @@ end
 #= Given two lists and a function, forms the cartesian product of the lists and
 applies the function to each resulting pair.
 Example: productMap({1, 2}, {3, 4}, intMul) = {1*3, 1*4, 2*3, 2*4} =#
-function productMap(inList1::List{T1}, inList2::List{T2}, inMapFunc::MapFunc)  where {T1, T2, TO}
+function productMap(inList1::List{T1}, inList2::List{T2}, inMapFunc::MapFunc)  where {T1, T2}
   local outResult::List{TO} = nil
 
   for e1 in listReverse(inList1), e2 in listReverse(inList2)
@@ -2255,8 +1850,8 @@ end
 #= Takes a list and a function, and creates a new list by applying the function
 to each element of the list. The created list will be reversed compared to
 the given list. =#
-function mapReverse(inList::List{TI}, inFunc::MapFunc)  where {TI, TO}
-  local outList::List{TO}
+function mapReverse(inList::List{TI}, inFunc::MapFunc)  where {TI}
+  local outList::List
 
   outList = listReverse(inFunc(e) for e in inList)
   outList
@@ -2264,12 +1859,12 @@ end
 
 #= Takes a list and a function, and creates two new lists by applying the
 function to each element of the list. =#
-function map_2(inList::List{TI}, inFunc::MapFunc)  where {TI, TO1, TO2}
-  local outList2::List{TO2} = nil
-  local outList1::List{TO1} = nil
+function map_2(inList::List{TI}, inFunc::MapFunc)  where {TI}
+  local outList2::List = nil
+  local outList1::List = nil
 
-  local e1::TO1
-  local e2::TO2
+  local e1
+  local e2
 
   for e in inList
     (e1, e2) = inFunc(e)
@@ -2287,14 +1882,13 @@ end
 
 #= Takes a list and a function, and creates three new lists by applying the
 function to each element of the list. =#
-function map_3(inList::List{TI}, inFunc::MapFunc)  where {TI, TO1, TO2, TO3}
-  local outList3::List{TO3} = nil
-  local outList2::List{TO2} = nil
-  local outList1::List{TO1} = nil
-
-  local e1::TO1
-  local e2::TO2
-  local e3::TO3
+function map_3(inList::List{TI}, inFunc::MapFunc)  where {TI}
+  local outList3::List = nil
+  local outList2::List = nil
+  local outList1::List = nil
+  local e1
+  local e2
+  local e3
 
   for e in inList
     (e1, e2, e3) = inFunc(e)
@@ -2318,7 +1912,7 @@ end
 
 #= The same as map(map(inList, getOption), inMapFunc), but is more efficient and
 it strips out NONE() instead of failing on them. =#
-function mapOption(inList::List{Option{TI}}, inFunc::MapFunc)  where {TI, TO}
+function mapOption(inList::List{Option{TI}}, inFunc::MapFunc)  where {TI}
   local outList::List{TO} = nil
 
   local ei::TI
@@ -2337,12 +1931,11 @@ end
 
 #= The same as map1(map(inList, getOption), inMapFunc), but is more efficient and
 it strips out NONE() instead of failing on them. =#
-function map1Option(inList::List{Option{TI}}, inFunc::MapFunc, inArg1::ArgT)  where {TI, TO, ArgT}
+function map1Option(inList::List{Option{TI}}, inFunc::MapFunc, inArg1::ArgT)  where {TI, ArgT}
   local outList::List{TO} = nil
 
   local ei::TI
   local eo::TO
-
   for oe in inList
     if ! isNone(oe)
       @match SOME(ei) = oe
@@ -5813,6 +5406,5 @@ function allCombinations4(x::T, ilst::List{List{T}}, iacc::List{List{T}})  where
   out
 end
 
-#= So that we can use wildcard imports and named imports when they do occur. Not good Julia practice =#
 @exportAll()
 end
