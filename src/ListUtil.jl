@@ -692,8 +692,10 @@ function consr(inList::List{T}, inElement::T)  where {T}
 end
 
 #= Adds the element to the front of the list if the condition is true. =#
-function consOnTrue(inCondition::Bool, inElement::T, inList::List{T})  where {T}
-  local outList::List{T}
+function consOnTrue(inCondition::Bool, inElement::T1, inList::List{T2})  where {T1, T2}
+  local outList::List{T1}
+
+  @assert !(T2 <: T1)
 
   outList = if inCondition
     _cons(inElement, inList)
@@ -2173,6 +2175,11 @@ end
 
 #= Takes a list of lists and returns the union of the sublists.
 Example: unionList({1}, {1, 2}, {3, 4}, {5}}) => {1, 2, 3, 4, 5} =#
+
+function unionList(::Nil{Any})
+  nil
+end
+
 function unionList(inList::List{List{T}})  where {T}
   local outUnion::List{T}
 
@@ -3081,7 +3088,7 @@ argument that is 'updated', thus returned from the function, and two constant
 arguments that is not updated. fold will call the function for each element in
 a sequence, updating the start value. =#
 function fold2(inList::List{T}, inFoldFunc::FoldFunc, inExtraArg1::ArgT1, inExtraArg2::ArgT2, inStartValue::FT)  where {T, FT, ArgT1, ArgT2}
-  local outResult::FT = inStartValue
+  local outResult = inStartValue
 
   for e in inList
     outResult = inFoldFunc(e, inExtraArg1, inExtraArg2, outResult)
@@ -3605,12 +3612,28 @@ end
 #= Takes a list of lists and flattens it out, producing one list of all elements
 of the sublists. O(len(outList))
 Example: flatten({{1, 2}, {3, 4, 5}, {6}, {}}) => {1, 2, 3, 4, 5, 6} =#
-function flatten(inList::List{List{T}})  where {T}
+function flatten(::Nil{Any})
+  nil
+end
+
+function flatten(inList::List{List{T}}) where {T}
   local outList::List{T} = listAppend(lst for lst in listReverse(inList))
   outList
 end
 
-function flattenReverse(inList::List{List{T}})  where {T}
+function flatten(inList::List{Any})
+  if listEmpty(listHead(inList)) && listEmpty(listRest(inList))
+    nil
+  else
+    @assert (false)
+  end
+end
+
+function flattenReverse(::Nil{Any})
+  nil
+end
+
+function flattenReverse(inList::List{List{T}}) where {T}
   local outList::List{T} = listAppend(lst for lst in inList)
   outList
 end
