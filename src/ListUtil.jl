@@ -1004,6 +1004,16 @@ function lastListOrEmpty(inListList::List{List{T}})  where {T}
   outLastList
 end
 
+function lastListOrEmpty(inListList::List{Any})
+  local outLastList::List{Any} = nil
+
+  for e in inListList
+    outLastList = e
+  end
+  outLastList
+end
+
+
 #= Returns the second last element of a list, or fails if such an element does
 not exist. =#
 function secondLast(inList::List{T})  where {T}
@@ -2559,9 +2569,12 @@ end
 #= Takes a list, a function and three extra arguments, and creates a new list
 by applying the function to each element of the list. =#
 function map3(inList::List{TI}, inFunc::MapFunc, inArg1::ArgT1, inArg2::ArgT2, inArg3::ArgT3)  where {TI, ArgT1, ArgT2, ArgT3}
-  local outList::List{Any}
+  local outList::List{Any} = nil
 
-  outList = list(inFunc(e, inArg1, inArg2, inArg3) for e in inList)
+  for e in inList
+    outList = _cons(inFunc(e, inArg1, inArg2, inArg3), outList)
+  end
+  outList = listReverse(outList)
   outList
 end
 
@@ -2569,9 +2582,12 @@ end
 by applying the function to each element of the list. The given map
 function has it's arguments reversed compared to map3. =#
 function map3r(inList::List{TI}, inFunc::MapFunc, inArg1::ArgT1, inArg2::ArgT2, inArg3::ArgT3)  where {TI, ArgT1, ArgT2, ArgT3}
-  local outList::List{Any}
+  local outList::List{Any} = nil
 
-  outList = list(inFunc(inArg1, inArg2, inArg3, e) for e in inList)
+  for e in inList
+    outList = _cons(inFunc(inArg1, inArg2, inArg3, e), outList)
+  end
+  outList = listReverse(outList)
   outList
 end
 
@@ -2605,9 +2621,12 @@ end
 #= Takes a list, a function and four extra arguments, and creates a new list
 by applying the function to each element of the list. =#
 function map4(inList::List{TI}, inFunc::MapFunc, inArg1::ArgT1, inArg2::ArgT2, inArg3::ArgT3, inArg4::ArgT4)  where {TI, ArgT1, ArgT2, ArgT3, ArgT4}
-  local outList::List{Any}
+  local outList::List{Any} = nil
 
-  outList = list(inFunc(e, inArg1, inArg2, inArg3, inArg4) for e in inList)
+  for e in inList
+    outList = _cons(inFunc(e, inArg1, inArg2, inArg3, inArg4), outList)
+  end
+  outList = listReverse(outList)
   outList
 end
 
@@ -2641,45 +2660,60 @@ end
 #= Takes a list, a function and five extra arguments, and creates a new list
 by applying the function to each element of the list. =#
 function map5(inList::List{TI}, inFunc::MapFunc, inArg1::ArgT1, inArg2::ArgT2, inArg3::ArgT3, inArg4::ArgT4, inArg5::ArgT5)  where {TI, ArgT1, ArgT2, ArgT3, ArgT4, ArgT5}
-  local outList::List{Any}
+  local outList::List{Any} = nil
 
-  outList = list(inFunc(e, inArg1, inArg2, inArg3, inArg4, inArg5) for e in inList)
+  for e in inList
+    outList = _cons(inFunc(e, inArg1, inArg2, inArg3, inArg4, inArg5), outList)
+  end
+  outList = listReverse(outList)
   outList
 end
 
 #= Takes a list, a function and six extra arguments, and creates a new list
 by applying the function to each element of the list. =#
 function map6(inList::List{TI}, inFunc::MapFunc, inArg1::ArgT1, inArg2::ArgT2, inArg3::ArgT3, inArg4::ArgT4, inArg5::ArgT5, inArg6::ArgT6)  where {TI, ArgT1, ArgT2, ArgT3, ArgT4, ArgT5, ArgT6}
-  local outList::List{Any}
+  local outList::List{Any} = nil
 
-  outList = list(inFunc(e, inArg1, inArg2, inArg3, inArg4, inArg5, inArg6) for e in inList)
+  for e in inList
+    outList = _cons(inFunc(e, inArg1, inArg2, inArg3, inArg4, inArg5, inArg6), outList)
+  end
+  outList = listReverse(outList)
   outList
 end
 
 #= Takes a list, a function and seven extra arguments, and creates a new list
 by applying the function to each element of the list. =#
 function map7(inList::List{TI}, inFunc::MapFunc, inArg1::ArgT1, inArg2::ArgT2, inArg3::ArgT3, inArg4::ArgT4, inArg5::ArgT5, inArg6::ArgT6, inArg7::ArgT7)  where {TI, ArgT1, ArgT2, ArgT3, ArgT4, ArgT5, ArgT6, ArgT7}
-  local outList::List{Any}
+  local outList::List{Any} = nil
 
-  outList = list(inFunc(e, inArg1, inArg2, inArg3, inArg4, inArg5, inArg6, inArg7) for e in inList)
+  for e in inList
+    outList = _cons(inFunc(e, inArg1, inArg2, inArg3, inArg4, inArg5, inArg6, inArg7), outList)
+  end
+  outList = listReverse(outList)
   outList
 end
 
 #= Takes a list, a function and eight extra arguments, and creates a new list
 by applying the function to each element of the list. =#
 function map8(inList::List{TI}, inFunc::MapFunc, inArg1::ArgT1, inArg2::ArgT2, inArg3::ArgT3, inArg4::ArgT4, inArg5::ArgT5, inArg6::ArgT6, inArg7::ArgT7, inArg8::ArgT8)  where {TI, ArgT1, ArgT2, ArgT3, ArgT4, ArgT5, ArgT6, ArgT7, ArgT8}
-  local outList::List{Any}
+  local outList::List{Any} = nil
 
-  outList = list(inFunc(e, inArg1, inArg2, inArg3, inArg4, inArg5, inArg6, inArg7, inArg8) for e in inList)
+  for e in inList
+    outList = _cons(inFunc(e, inArg1, inArg2, inArg3, inArg4, inArg5, inArg6, inArg7, inArg8), outList)
+  end
+  outList = listReverse(outList)
   outList
 end
 
 #= Takes a list, a function and nine extra arguments, and creates a new list
 by applying the function to each element of the list. =#
 function map9(inList::List{TI}, inFunc::MapFunc, inArg1::ArgT1, inArg2::ArgT2, inArg3::ArgT3, inArg4::ArgT4, inArg5::ArgT5, inArg6::ArgT6, inArg7::ArgT7, inArg8::ArgT8, inArg9::ArgT9)  where {TI, ArgT1, ArgT2, ArgT3, ArgT4, ArgT5, ArgT6, ArgT7, ArgT8, ArgT9}
-  local outList::List{Any}
+  local outList::List{Any} = nil
 
-  outList = list(inFunc(e, inArg1, inArg2, inArg3, inArg4, inArg5, inArg6, inArg7, inArg8, inArg9) for e in inList)
+  for e in inList
+    outList = _cons(inFunc(e, inArg1, inArg2, inArg3, inArg4, inArg5, inArg6, inArg7, inArg8, inArg9), outList)
+  end
+  outList = listReverse(outList)
   outList
 end
 
@@ -2734,9 +2768,12 @@ end
 
 #= More efficient than: map(map(inList, inMapFunc1), inMapFunc2) =#
 function mapMap(inList::List{TI}, inMapFunc1::MapFunc1, inMapFunc2::MapFunc2)  where {TI, TO1, TO2}
-  local outList::List{TO2}
+  local outList::List{TO2} = nil
 
-  outList = list(inMapFunc2(inMapFunc1(e)) for e in inList)
+  for e in inList
+    outList = _cons(inMapFunc2(inMapFunc1(e)), outList)
+  end
+  outList = listReverseInPlace(outList)
   outList
 end
 
