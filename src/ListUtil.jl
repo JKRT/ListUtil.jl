@@ -2220,9 +2220,12 @@ end
 #= Takes a list and a function, and creates a new list by applying the function
 to each element of the list. =#
 function map(inList::List{TI}, inFunc::MapFunc)  where {TI}
-  local outList::List{Any}
+  local outList::List{Any} = nil
 
-  outList = list(inFunc(e) for e in inList)
+  for e in inList
+    outList = _cons(inFunc(e), outList)
+  end
+  outList = listReverse(outList)
   outList
 end
 
