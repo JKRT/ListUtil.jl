@@ -3653,8 +3653,15 @@ function flatten(::Nil{Any})
   nil
 end
 
+function flatten(::Cons{Nil{Any}})
+  nil
+end
+
 function flatten(inList::List{List{T}}) where {T}
-  local outList::List{T} = listAppend(lst for lst in listReverse(inList))
+  local outList::List{T} = nil
+  for lst in inList
+    outList = listAppend(lst, outList)
+  end
   outList
 end
 
@@ -3670,8 +3677,15 @@ function flattenReverse(::Nil{Any})
   nil
 end
 
+function flattenReverse(::Cons{Nil{Any}})
+  nil
+end
+
 function flattenReverse(inList::List{List{T}}) where {T}
-  local outList::List{T} = listAppend(lst for lst in inList)
+  local outList::List{T} = nil
+  for lst in listReverse(inList)
+    outList = listAppend(lst, outList)
+  end
   outList
 end
 
