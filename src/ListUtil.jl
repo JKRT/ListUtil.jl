@@ -2219,8 +2219,8 @@ end
 
 #= Takes a list and a function, and creates a new list by applying the function
 to each element of the list. =#
-function map(inList::List{TI}, inFunc::MapFunc)  where {TI}
-  local outList::List{Any} = nil
+function map(inList::List{TI}, inFunc::MapFunc, ::Type{TO} = Any)  where {TI, TO}
+  local outList::List{TO} = nil
 
   for e in inList
     outList = _cons(inFunc(e), outList)
@@ -3333,11 +3333,11 @@ end
 #= Takes a list, an extra argument and a function. The function will be applied
 to each element in the list, and the extra argument will be passed to the
 function and updated. =#
-function mapFold(inList::List{TI}, inFunc::FuncType, inArg::FT)  where {TI, FT}
+function mapFold(inList::List{TI}, inFunc::FuncType, inArg::FT, ::Type{TO} = Any)  where {TI, FT, TO}
   local outArg::FT = inArg
-  local outList::List{Any} = nil
+  local outList::List{TO} = nil
 
-  local res::Any
+  local res::TO
 
   for e in inList
     (res, outArg) = inFunc(e, outArg)
