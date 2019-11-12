@@ -3081,8 +3081,8 @@ argument that is 'updated', thus returned from the function. fold will call
 the function for each element in a sequence, updating the start value.
 Example: fold({1, 2, 3}, intAdd, 2) => 8
 intAdd(1, 2) => 3, intAdd(2, 3) => 5, intAdd(3, 5) => 8 =#
-function fold(inList::List{T}, inFoldFunc::FoldFunc, inStartValue::FT)  where {T, FT}
-  local outResult::FT = inStartValue
+function fold(inList::List{T}, inFoldFunc::FoldFunc, inStartValue::FT, ::Type{TO} = Any)  where {T, FT, TO}
+  local outResult::TO = inStartValue
 
   for e in inList
     outResult = inFoldFunc(e, outResult)
@@ -3091,8 +3091,8 @@ function fold(inList::List{T}, inFoldFunc::FoldFunc, inStartValue::FT)  where {T
 end
 
 #= Same as fold, but with reversed order on the fold function arguments. =#
-function foldr(inList::List{T}, inFoldFunc::FoldFunc, inStartValue::FT)  where {T, FT}
-  local outResult::FT = inStartValue
+function foldr(inList::List{T}, inFoldFunc::FoldFunc, inStartValue::FT, ::Type{TO} = Any)  where {T, FT, TO}
+  local outResult::TO = inStartValue
 
   for e in inList
     outResult = inFoldFunc(outResult, e)
@@ -3104,8 +3104,8 @@ end
 argument that is 'updated', thus returned from the function, and a constant
 argument that is not updated. fold will call the function for each element in
 a sequence, updating the start value. =#
-function fold1(inList::List{T}, inFoldFunc::FoldFunc, inExtraArg::ArgT1, inStartValue::FT)  where {T, FT, ArgT1}
-  local outResult::FT = inStartValue
+function fold1(inList::List{T}, inFoldFunc::FoldFunc, inExtraArg::ArgT1, inStartValue::FT, ::Type{TO} = Any)  where {T, FT, ArgT1, TO}
+  local outResult::TO = inStartValue
 
   for e in inList
     outResult = inFoldFunc(e, inExtraArg, outResult)
@@ -3114,8 +3114,8 @@ function fold1(inList::List{T}, inFoldFunc::FoldFunc, inExtraArg::ArgT1, inStart
 end
 
 #= Same as fold1, but with reversed order on the fold function arguments. =#
-function fold1r(inList::List{T}, inFoldFunc::FoldFunc, inExtraArg::ArgT1, inStartValue::FT)  where {T, FT, ArgT1}
-  local outResult::FT = inStartValue
+function fold1r(inList::List{T}, inFoldFunc::FoldFunc, inExtraArg::ArgT1, inStartValue::FT, ::Type{TO} = Any)  where {T, FT, ArgT1, TO}
+  local outResult::TO = inStartValue
 
   for e in inList
     outResult = inFoldFunc(outResult, e, inExtraArg)
@@ -3127,8 +3127,8 @@ end
 argument that is 'updated', thus returned from the function, and two constant
 arguments that is not updated. fold will call the function for each element in
 a sequence, updating the start value. =#
-function fold2(inList::List{T}, inFoldFunc::FoldFunc, inExtraArg1::ArgT1, inExtraArg2::ArgT2, inStartValue::FT)  where {T, FT, ArgT1, ArgT2}
-  local outResult = inStartValue
+function fold2(inList::List{T}, inFoldFunc::FoldFunc, inExtraArg1::ArgT1, inExtraArg2::ArgT2, inStartValue::FT, ::Type{TO} = Any)  where {T, FT, ArgT1, ArgT2, TO}
+  local outResult::TO = inStartValue
 
   for e in inList
     outResult = inFoldFunc(e, inExtraArg1, inExtraArg2, outResult)
