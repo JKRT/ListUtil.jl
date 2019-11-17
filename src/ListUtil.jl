@@ -582,7 +582,7 @@ function lastElement(inList::List{T})  where {T}
 
   @match false = listEmpty(rest)
   while ! listEmpty(rest)
-    @match (@match _cons(_, rest) = lst) = rest
+    @match (lst && _ <| rest) = rest
     listLength = listLength + 1
   end
   (lst, listLength)
@@ -822,7 +822,7 @@ function sortedListAllUnique(lst::List{T}, compare::CompareFunc)  where {T}
 
         e1 <| rest && e2 <| _  => begin
           if compare(e1, e2)
-            return
+            return allUnique
           end
           rest
         end
@@ -2781,8 +2781,8 @@ function foldList2(inList::List{List{T}}, inFoldFunc::FoldFunc, inExtraArg1::Arg
 end
 
 #= Same as fold2, but with reversed order on the fold function arguments. =#
-function fold2r(inList::List{T}, inFoldFunc::FoldFunc, inExtraArg1::ArgT1, inExtraArg2::ArgT2, inStartValue::FT)  where {T, FT, ArgT1, ArgT2}
-  local outResult::FT = inStartValue
+function fold2r(inList::List{T}, inFoldFunc::FoldFunc, inExtraArg1::ArgT1, inExtraArg2::ArgT2, inStartValue::FT, ::Type{TO} = Any)  where {T, FT, ArgT1, ArgT2, TO}
+  local outResult::TO = inStartValue
 
   for e in inList
     outResult = inFoldFunc(outResult, e, inExtraArg1, inExtraArg2)
@@ -2794,8 +2794,8 @@ end
 argument that is 'updated', thus returned from the function, and three constant
 arguments that is not updated. fold will call the function for each element in
 a sequence, updating the start value. =#
-function fold3(inList::List{T}, inFoldFunc::FoldFunc, inExtraArg1::ArgT1, inExtraArg2::ArgT2, inExtraArg3::ArgT3, inStartValue::FT)  where {T, FT, ArgT1, ArgT2, ArgT3}
-  local outResult::FT = inStartValue
+function fold3(inList::List{T}, inFoldFunc::FoldFunc, inExtraArg1::ArgT1, inExtraArg2::ArgT2, inExtraArg3::ArgT3, inStartValue::FT, ::Type{TO} = Any)  where {T, FT, ArgT1, ArgT2, ArgT3, TO}
+  local outResult::TO = inStartValue
 
   for e in inList
     outResult = inFoldFunc(e, inExtraArg1, inExtraArg2, inExtraArg3, outResult)
@@ -3268,6 +3268,15 @@ function flatten(inList::List{Any})
     @assert (false)
   end
 end
+
+function flatten(inList::List)
+  local outList::List = nil
+  for lst in inList
+    outList = listAppend(lst, outList)
+  end
+  outList
+end
+
 
 function flattenReverse(::Nil{Any})
   nil
