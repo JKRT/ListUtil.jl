@@ -582,7 +582,7 @@ function lastElement(inList::List{T})  where {T}
 
   @match false = listEmpty(rest)
   while ! listEmpty(rest)
-    @match (@match _cons(_, rest) = lst) = rest
+    @match (lst && _ <| rest) = rest
     listLength = listLength + 1
   end
   (lst, listLength)
@@ -822,7 +822,7 @@ function sortedListAllUnique(lst::List{T}, compare::CompareFunc)  where {T}
 
         e1 <| rest && e2 <| _  => begin
           if compare(e1, e2)
-            return
+            return allUnique
           end
           rest
         end
@@ -1376,7 +1376,7 @@ end
 #= Given two lists and a function, forms the cartesian product of the lists and
 applies the function to each resulting pair.
 Example: productMap({1, 2}, {3, 4}, intMul) = {1*3, 1*4, 2*3, 2*4} =#
-function productMap(inList1::List{T1}, inList2::List{T2}, inMapFunc::MapFunc)  where {T1, T2}
+function productMap(inList1::List{T1}, inList2::List{T2}, inMapFunc::MapFunc, ::Type{TO} = Any)  where {T1, T2, TO}
   local outResult::List{TO} = nil
 
   for e1 in listReverse(inList1), e2 in listReverse(inList2)
@@ -1870,18 +1870,17 @@ end
 #= Takes a list and a function, and creates a new list by applying the function
 to each element of the list. The created list will be reversed compared to
 the given list. =#
-function mapReverse(inList::List{TI}, inFunc::MapFunc)  where {TI}
-  local outList::List
-
+function mapReverse(inList::List{TI}, inFunc::MapFunc, ::Type{TO} = Any)  where {TI, TO}
+  local outList::List{TO}
   outList = listReverse(inFunc(e) for e in inList)
   outList
 end
 
 #= Takes a list and a function, and creates two new lists by applying the
 function to each element of the list. =#
-function map_2(inList::List{TI}, inFunc::MapFunc)  where {TI}
-  local outList2::List = nil
-  local outList1::List = nil
+function map_2(inList::List{TI}, inFunc::MapFunc, ::Type{TO1} = Any, ::Type{TO2} = Any)  where {TI, TO1, TO2}
+  local outList2::List{TO2} = nil
+  local outList1::List{TO1} = nil
 
   local e1
   local e2
@@ -1902,13 +1901,14 @@ end
 
 #= Takes a list and a function, and creates three new lists by applying the
 function to each element of the list. =#
-function map_3(inList::List{TI}, inFunc::MapFunc)  where {TI}
-  local outList3::List = nil
-  local outList2::List = nil
-  local outList1::List = nil
-  local e1
-  local e2
-  local e3
+function map_3(inList::List{TI}, inFunc::MapFunc, ::Type{TO1} = Any, ::Type{TO2} = Any, ::Type{TO3} = Any)  where {TI, TO1, TO2, TO3}
+  local outList3::List{TO3} = nil
+  local outList2::List{TO2} = nil
+  local outList1::List{TO1} = nil
+
+  local e1::TO1
+  local e2::TO2
+  local e3::TO3
 
   for e in inList
     (e1, e2, e3) = inFunc(e)
@@ -1932,7 +1932,7 @@ end
 
 #= The same as map(map(inList, getOption), inMapFunc), but is more efficient and
 it strips out NONE() instead of failing on them. =#
-function mapOption(inList::List{Option{TI}}, inFunc::MapFunc)  where {TI}
+function mapOption(inList::List{Option{TI}}, inFunc::MapFunc, ::Type{TO} = Any)  where {TI, TO}
   local outList::List{TO} = nil
 
   local ei::TI
@@ -1951,7 +1951,7 @@ end
 
 #= The same as map1(map(inList, getOption), inMapFunc), but is more efficient and
 it strips out NONE() instead of failing on them. =#
-function map1Option(inList::List{Option{TI}}, inFunc::MapFunc, inArg1::ArgT)  where {TI, ArgT}
+function map1Option(inList::List{Option{TI}}, inFunc::MapFunc, inArg1::ArgT, ::Type{TO} = Any)  where {TI, TO, ArgT}
   local outList::List{TO} = nil
 
   local ei::TI
@@ -1969,7 +1969,7 @@ end
 
 #= The same as map2(map(inList, getOption), inMapFunc), but is more efficient and
 it strips out NONE() instead of failing on them. =#
-function map2Option(inList::List{Option{TI}}, inFunc::MapFunc, inArg1::ArgT1, inArg2::ArgT2)  where {TI, TO, ArgT1, ArgT2}
+function map2Option(inList::List{Option{TI}}, inFunc::MapFunc, inArg1::ArgT1, inArg2::ArgT2, ::Type{TO} = Any)  where {TI, TO, ArgT1, ArgT2}
   local outList::List{TO} = nil
 
   local ei::TI
@@ -1996,8 +1996,8 @@ end
 
 #= Takes a list, a function and one extra argument, and creates a new list
 by applying the function to each element of the list. =#
-function map1(inList::List{TI}, inMapFunc::MapFunc, inArg1::ArgT1)  where {TI, ArgT1}
-  local outList::List{Any}
+function map1(inList::List{TI}, inMapFunc::MapFunc, inArg1::ArgT1, ::Type{TO} = Any)  where {TI, ArgT1, TO}
+  local outList::List{TO}
 
   outList = list(inMapFunc(e, inArg1) for e in inList)
   outList
@@ -2006,7 +2006,7 @@ end
 #= Takes a list, a function and one extra argument, and creates a new list
 by applying the function to each element of the list. The created list will
 be reversed compared to the given list. =#
-function map1Reverse(inList::List{TI}, inMapFunc::MapFunc, inArg1::ArgT1)  where {TI, TO, ArgT1}
+function map1Reverse(inList::List{TI}, inMapFunc::MapFunc, inArg1::ArgT1, ::Type{TO} = Any)  where {TI, TO, ArgT1}
   local outList::List{TO}
 
   outList = listReverse(inMapFunc(e, inArg1) for e in inList)
@@ -2016,8 +2016,8 @@ end
 #= Takes a list, a function and one extra argument, and creates a new list
 by applying the function to each element of the list. The given map
 function has it's arguments reversed compared to map1. =#
-function map1r(inList::List{TI}, inFunc::MapFunc, inArg1::ArgT1)  where {TI, ArgT1}
-  local outList::List{Any}
+function map1r(inList::List{TI}, inFunc::MapFunc, inArg1::ArgT1, ::Type{TO} = Any)  where {TI, ArgT1, TO}
+  local outList::List{TO}
 
   outList = list(inFunc(inArg1, e) for e in inList)
   outList
@@ -2052,7 +2052,7 @@ end
 
 #= Takes a list and a function, and creates three new lists by applying the
 function to each element of the list. =#
-function map1_3(inList::List{TI}, inFunc::MapFunc, inArg1::ArgT1)  where {TI, TO1, TO2, TO3, ArgT1}
+function map1_3(inList::List{TI}, inFunc::MapFunc, inArg1::ArgT1, ::Type{TO1} = Any, ::Type{TO2} = Any, ::Type{TO3} = Any)  where {TI, TO1, TO2, TO3, ArgT1}
   local outList3::List{TO3} = nil
   local outList2::List{TO2} = nil
   local outList1::List{TO1} = nil
@@ -2075,8 +2075,8 @@ end
 
 #= Takes a list, a function and two extra arguments, and creates a new list
 by applying the function to each element of the list. =#
-function map2(inList::List{TI}, inFunc::MapFunc, inArg1::ArgT1, inArg2::ArgT2)  where {TI, ArgT1, ArgT2}
-  local outList::List{Any}
+function map2(inList::List{TI}, inFunc::MapFunc, inArg1::ArgT1, inArg2::ArgT2, ::Type{TO} = Any)  where {TI, ArgT1, ArgT2, TO}
+  local outList::List{TO}
 
   outList = list(inFunc(e, inArg1, inArg2) for e in inList)
   outList
@@ -2085,8 +2085,8 @@ end
 #= Takes a list, a function and two extra arguments, and creates a new list
 by applying the function to each element of the list. The created list will
 be reversed compared to the given list. =#
-function map2Reverse(inList::List{TI}, inFunc::MapFunc, inArg1::ArgT1, inArg2::ArgT2)  where {TI, ArgT1, ArgT2}
-  local outList::List{Any}
+function map2Reverse(inList::List{TI}, inFunc::MapFunc, inArg1::ArgT1, inArg2::ArgT2, ::Type{TO} = Any)  where {TI, ArgT1, ArgT2, TO}
+  local outList::List{TO}
 
   outList = listReverse(inFunc(e, inArg1, inArg2) for e in inList)
   outList
@@ -2095,8 +2095,8 @@ end
 #= Takes a list, a function and two extra argument, and creates a new list
 by applying the function to each element of the list. The given map
 function has it's arguments in another order compared to map2 and map2r. =#
-function map2rm(inList::List{TI}, inFunc::MapFunc, inArg1::ArgT1, inArg2::ArgT2)  where {TI, ArgT1, ArgT2}
-  local outList::List{Any}
+function map2rm(inList::List{TI}, inFunc::MapFunc, inArg1::ArgT1, inArg2::ArgT2, ::Type{TO} = Any)  where {TI, ArgT1, ArgT2, TO}
+  local outList::List{TO}
 
   outList = list(inFunc(inArg1, e, inArg2) for e in inList)
   outList
@@ -2105,8 +2105,8 @@ end
 #= Takes a list, a function and two extra argument, and creates a new list
 by applying the function to each element of the list. The given map
 function has it's arguments reversed compared to map2. =#
-function map2r(inList::List{TI}, inFunc::MapFunc, inArg1::ArgT1, inArg2::ArgT2)  where {TI, ArgT1, ArgT2}
-  local outList::List{Any}
+function map2r(inList::List{TI}, inFunc::MapFunc, inArg1::ArgT1, inArg2::ArgT2, ::Type{TO} = Any)  where {TI, ArgT1, ArgT2, TO}
+  local outList::List{TO}
 
   outList = list(inFunc(inArg1, inArg2, e) for e in inList)
   outList
@@ -2122,7 +2122,7 @@ end
 
 #= Takes a list, a function and two extra argument, and creates two new lists
 by applying the function to each element of the list. =#
-function map2_2(inList::List{TI}, inFunc::MapFunc, inArg1::ArgT1, inArg2::ArgT2)  where {TI, TO1, TO2, ArgT1, ArgT2}
+function map2_2(inList::List{TI}, inFunc::MapFunc, inArg1::ArgT1, inArg2::ArgT2, ::Type{TO1} = Any, ::Type{TO2} = Any)  where {TI, TO1, TO2, ArgT1, ArgT2}
   local outList2::List{TO2} = nil
   local outList1::List{TO1} = nil
 
@@ -2141,7 +2141,7 @@ end
 
 #= Takes a list, a function and two extra argument, and creates three new lists
 by applying the function to each element of the list. =#
-function map2_3(inList::List{TI}, inFunc::MapFunc, inArg1::ArgT1, inArg2::ArgT2)  where {TI, TO1, TO2, TO3, ArgT1, ArgT2}
+function map2_3(inList::List{TI}, inFunc::MapFunc, inArg1::ArgT1, inArg2::ArgT2, ::Type{TO1} = Any, ::Type{TO2} = Any, ::Type{TO3} = Any)  where {TI, TO1, TO2, TO3, ArgT1, ArgT2}
   local outList3::List{TO3} = nil
   local outList2::List{TO2} = nil
   local outList1::List{TO1} = nil
@@ -2164,8 +2164,8 @@ end
 
 #= Takes a list, a function and three extra arguments, and creates a new list
 by applying the function to each element of the list. =#
-function map3(inList::List{TI}, inFunc::MapFunc, inArg1::ArgT1, inArg2::ArgT2, inArg3::ArgT3)  where {TI, ArgT1, ArgT2, ArgT3}
-  local outList::List{Any} = nil
+function map3(inList::List{TI}, inFunc::MapFunc, inArg1::ArgT1, inArg2::ArgT2, inArg3::ArgT3, ::Type{TO} = Any)  where {TI, ArgT1, ArgT2, ArgT3, TO}
+  local outList::List{TO} = nil
 
   for e in inList
     outList = _cons(inFunc(e, inArg1, inArg2, inArg3), outList)
@@ -2177,8 +2177,8 @@ end
 #= Takes a list, a function and three extra argument, and creates a new list
 by applying the function to each element of the list. The given map
 function has it's arguments reversed compared to map3. =#
-function map3r(inList::List{TI}, inFunc::MapFunc, inArg1::ArgT1, inArg2::ArgT2, inArg3::ArgT3)  where {TI, ArgT1, ArgT2, ArgT3}
-  local outList::List{Any} = nil
+function map3r(inList::List{TI}, inFunc::MapFunc, inArg1::ArgT1, inArg2::ArgT2, inArg3::ArgT3, ::Type{TO} = Any)  where {TI, ArgT1, ArgT2, ArgT3, TO}
+  local outList::List{TO} = nil
 
   for e in inList
     outList = _cons(inFunc(inArg1, inArg2, inArg3, e), outList)
@@ -2197,7 +2197,7 @@ end
 
 #= Takes a list, a function and three extra argument, and creates two new lists
 by applying the function to each element of the list. =#
-function map3_2(inList::List{TI}, inFunc::MapFunc, inArg1::ArgT1, inArg2::ArgT2, inArg3::ArgT3)  where {TI, TO1, TO2, ArgT1, ArgT2, ArgT3}
+function map3_2(inList::List{TI}, inFunc::MapFunc, inArg1::ArgT1, inArg2::ArgT2, inArg3::ArgT3, ::Type{TO1} = Any, ::Type{TO2} = Any)  where {TI, TO1, TO2, ArgT1, ArgT2, ArgT3}
   local outList2::List{TO2} = nil
   local outList1::List{TO1} = nil
 
@@ -2216,8 +2216,8 @@ end
 
 #= Takes a list, a function and four extra arguments, and creates a new list
 by applying the function to each element of the list. =#
-function map4(inList::List{TI}, inFunc::MapFunc, inArg1::ArgT1, inArg2::ArgT2, inArg3::ArgT3, inArg4::ArgT4)  where {TI, ArgT1, ArgT2, ArgT3, ArgT4}
-  local outList::List{Any} = nil
+function map4(inList::List{TI}, inFunc::MapFunc, inArg1::ArgT1, inArg2::ArgT2, inArg3::ArgT3, inArg4::ArgT4, ::Type{TO} = Any)  where {TI, ArgT1, ArgT2, ArgT3, ArgT4, TO}
+  local outList::List{TO} = nil
 
   for e in inList
     outList = _cons(inFunc(e, inArg1, inArg2, inArg3, inArg4), outList)
@@ -2236,7 +2236,7 @@ end
 
 #= Takes a list, a function and three extra argument, and creates two new lists
 by applying the function to each element of the list. =#
-function map4_2(inList::List{TI}, inFunc::MapFunc, inArg1::ArgT1, inArg2::ArgT2, inArg3::ArgT3, inArg4::ArgT4)  where {TI, TO1, TO2, ArgT1, ArgT2, ArgT3, ArgT4}
+function map4_2(inList::List{TI}, inFunc::MapFunc, inArg1::ArgT1, inArg2::ArgT2, inArg3::ArgT3, inArg4::ArgT4, ::Type{TO1} = Any, ::Type{TO2} = Any)  where {TI, TO1, TO2, ArgT1, ArgT2, ArgT3, ArgT4}
   local outList2::List{TO2} = nil
   local outList1::List{TO1} = nil
 
@@ -2255,8 +2255,8 @@ end
 
 #= Takes a list, a function and five extra arguments, and creates a new list
 by applying the function to each element of the list. =#
-function map5(inList::List{TI}, inFunc::MapFunc, inArg1::ArgT1, inArg2::ArgT2, inArg3::ArgT3, inArg4::ArgT4, inArg5::ArgT5)  where {TI, ArgT1, ArgT2, ArgT3, ArgT4, ArgT5}
-  local outList::List{Any} = nil
+function map5(inList::List{TI}, inFunc::MapFunc, inArg1::ArgT1, inArg2::ArgT2, inArg3::ArgT3, inArg4::ArgT4, inArg5::ArgT5, ::Type{TO} = Any)  where {TI, ArgT1, ArgT2, ArgT3, ArgT4, ArgT5, TO}
+  local outList::List{TO} = nil
 
   for e in inList
     outList = _cons(inFunc(e, inArg1, inArg2, inArg3, inArg4, inArg5), outList)
@@ -2267,8 +2267,8 @@ end
 
 #= Takes a list, a function and six extra arguments, and creates a new list
 by applying the function to each element of the list. =#
-function map6(inList::List{TI}, inFunc::MapFunc, inArg1::ArgT1, inArg2::ArgT2, inArg3::ArgT3, inArg4::ArgT4, inArg5::ArgT5, inArg6::ArgT6)  where {TI, ArgT1, ArgT2, ArgT3, ArgT4, ArgT5, ArgT6}
-  local outList::List{Any} = nil
+function map6(inList::List{TI}, inFunc::MapFunc, inArg1::ArgT1, inArg2::ArgT2, inArg3::ArgT3, inArg4::ArgT4, inArg5::ArgT5, inArg6::ArgT6, ::Type{TO} = Any)  where {TI, ArgT1, ArgT2, ArgT3, ArgT4, ArgT5, ArgT6, TO}
+  local outList::List{TO} = nil
 
   for e in inList
     outList = _cons(inFunc(e, inArg1, inArg2, inArg3, inArg4, inArg5, inArg6), outList)
@@ -2279,8 +2279,8 @@ end
 
 #= Takes a list, a function and seven extra arguments, and creates a new list
 by applying the function to each element of the list. =#
-function map7(inList::List{TI}, inFunc::MapFunc, inArg1::ArgT1, inArg2::ArgT2, inArg3::ArgT3, inArg4::ArgT4, inArg5::ArgT5, inArg6::ArgT6, inArg7::ArgT7)  where {TI, ArgT1, ArgT2, ArgT3, ArgT4, ArgT5, ArgT6, ArgT7}
-  local outList::List{Any} = nil
+function map7(inList::List{TI}, inFunc::MapFunc, inArg1::ArgT1, inArg2::ArgT2, inArg3::ArgT3, inArg4::ArgT4, inArg5::ArgT5, inArg6::ArgT6, inArg7::ArgT7, ::Type{TO} = Any)  where {TI, ArgT1, ArgT2, ArgT3, ArgT4, ArgT5, ArgT6, ArgT7, TO}
+  local outList::List{TO} = nil
 
   for e in inList
     outList = _cons(inFunc(e, inArg1, inArg2, inArg3, inArg4, inArg5, inArg6, inArg7), outList)
@@ -2291,8 +2291,8 @@ end
 
 #= Takes a list, a function and eight extra arguments, and creates a new list
 by applying the function to each element of the list. =#
-function map8(inList::List{TI}, inFunc::MapFunc, inArg1::ArgT1, inArg2::ArgT2, inArg3::ArgT3, inArg4::ArgT4, inArg5::ArgT5, inArg6::ArgT6, inArg7::ArgT7, inArg8::ArgT8)  where {TI, ArgT1, ArgT2, ArgT3, ArgT4, ArgT5, ArgT6, ArgT7, ArgT8}
-  local outList::List{Any} = nil
+function map8(inList::List{TI}, inFunc::MapFunc, inArg1::ArgT1, inArg2::ArgT2, inArg3::ArgT3, inArg4::ArgT4, inArg5::ArgT5, inArg6::ArgT6, inArg7::ArgT7, inArg8::ArgT8, ::Type{TO} = Any)  where {TI, ArgT1, ArgT2, ArgT3, ArgT4, ArgT5, ArgT6, ArgT7, ArgT8, TO}
+  local outList::List{TO} = nil
 
   for e in inList
     outList = _cons(inFunc(e, inArg1, inArg2, inArg3, inArg4, inArg5, inArg6, inArg7, inArg8), outList)
@@ -2303,8 +2303,8 @@ end
 
 #= Takes a list, a function and nine extra arguments, and creates a new list
 by applying the function to each element of the list. =#
-function map9(inList::List{TI}, inFunc::MapFunc, inArg1::ArgT1, inArg2::ArgT2, inArg3::ArgT3, inArg4::ArgT4, inArg5::ArgT5, inArg6::ArgT6, inArg7::ArgT7, inArg8::ArgT8, inArg9::ArgT9)  where {TI, ArgT1, ArgT2, ArgT3, ArgT4, ArgT5, ArgT6, ArgT7, ArgT8, ArgT9}
-  local outList::List{Any} = nil
+function map9(inList::List{TI}, inFunc::MapFunc, inArg1::ArgT1, inArg2::ArgT2, inArg3::ArgT3, inArg4::ArgT4, inArg5::ArgT5, inArg6::ArgT6, inArg7::ArgT7, inArg8::ArgT8, inArg9::ArgT9, ::Type{TO} = Any)  where {TI, ArgT1, ArgT2, ArgT3, ArgT4, ArgT5, ArgT6, ArgT7, ArgT8, ArgT9, TO}
+  local outList::List{TO} = nil
 
   for e in inList
     outList = _cons(inFunc(e, inArg1, inArg2, inArg3, inArg4, inArg5, inArg6, inArg7, inArg8, inArg9), outList)
@@ -2316,8 +2316,8 @@ end
 #= Takes a list and a function that maps elements to lists, which are flattened
 into one list. Example (fill2(n) = {n, n}):
 mapFlat({1, 2, 3}, fill2) => {1, 1, 2, 2, 3, 3} =#
-function mapFlat(inList::List{TI}, inMapFunc::MapFunc)  where {TI}
-  local outList::List{Any}
+function mapFlat(inList::List{TI}, inMapFunc::MapFunc, ::Type{TO} = Any)  where {TI, TO}
+  local outList::List{TO}
 
   outList = listReverse(mapFlatReverse(inList, inMapFunc))
   outList
@@ -2327,8 +2327,8 @@ end
 into one list. Returns the values in reverse order as the input.
 Example (fill2(n) = {n, n}):
 mapFlat({1, 2, 3}, fill2) => {3, 3, 2, 2, 1, 1} =#
-function mapFlatReverse(inList::List{TI}, inMapFunc::MapFunc)  where {TI}
-  local outList::List{Any} = nil
+function mapFlatReverse(inList::List{TI}, inMapFunc::MapFunc, ::Type{TO} = Any)  where {TI, TO}
+  local outList::List{TO} = nil
 
   for e in inList
     outList = listAppend(inMapFunc(e), outList)
@@ -2339,8 +2339,8 @@ end
 #= Takes a list and a function that maps elements to lists, which are flattened
 into one list. This function also takes an extra argument that is passed to
 the mapping function. =#
-function map1Flat(inList::List{TI}, inMapFunc::MapFunc, inArg1::ArgT1)  where {TI, ArgT1}
-  local outList::List{Any} = nil
+function map1Flat(inList::List{TI}, inMapFunc::MapFunc, inArg1::ArgT1, ::Type{TO} = Any)  where {TI, ArgT1, TO}
+  local outList::List{TO} = nil
 
   for e in inList
     outList = listAppend(inMapFunc(e, inArg1), outList)
@@ -2352,8 +2352,8 @@ end
 #= Takes a list and a function that maps elements to lists, which are flattened
 into one list. This function also takes two extra arguments that are passed
 to the mapping function. =#
-function map2Flat(inList::List{TI}, inMapFunc::MapFunc, inArg1::ArgT1, inArg2::ArgT2)  where {TI, ArgT1, ArgT2}
-  local outList::List{Any} = nil
+function map2Flat(inList::List{TI}, inMapFunc::MapFunc, inArg1::ArgT1, inArg2::ArgT2, ::Type{TO} = Any)  where {TI, ArgT1, ArgT2, TO}
+  local outList::List{TO} = nil
 
   for e in inList
     outList = listAppend(inMapFunc(e, inArg1, inArg2), outList)
@@ -2363,8 +2363,8 @@ function map2Flat(inList::List{TI}, inMapFunc::MapFunc, inArg1::ArgT1, inArg2::A
 end
 
 #= More efficient than: map(map(inList, inMapFunc1), inMapFunc2) =#
-function mapMap(inList::List{TI}, inMapFunc1::MapFunc1, inMapFunc2::MapFunc2)  where {TI, TO1, TO2}
-  local outList::List{TO2} = nil
+function mapMap(inList::List{TI}, inMapFunc1::MapFunc1, inMapFunc2::MapFunc2, ::Type{TO} = Any)  where {TI, TO}
+  local outList::List{TO} = nil
 
   for e in inList
     outList = _cons(inMapFunc2(inMapFunc1(e)), outList)
@@ -2374,7 +2374,7 @@ function mapMap(inList::List{TI}, inMapFunc1::MapFunc1, inMapFunc2::MapFunc2)  w
 end
 
 #= More efficient than map_0(map(inList, inMapFunc1), inMapFunc2), =#
-function mapMap_0(inList::List{TI}, inMapFunc1::MapFunc1, inMapFunc2::MapFunc2)  where {TI, TO}
+function mapMap_0(inList::List{TI}, inMapFunc1::MapFunc1, inMapFunc2::MapFunc2)  where {TI}
   for e in inList
     inMapFunc2(inMapFunc1(e))
   end
@@ -2382,8 +2382,8 @@ end
 
 #= Applies a function to all elements in the lists, and fails if not all
 elements are equal to the given value. =#
-function mapAllValue(inList::List{TI}, inMapFunc::MapFunc, inValue::VT)  where {TI, VT}
-  local eo::Any
+function mapAllValue(inList::List{TI}, inMapFunc::MapFunc, inValue::VT, ::Type{TO} = Any)  where {TI, VT, TO}
+  local eo::TO
 
   for e in inList
     eo = inMapFunc(e)
@@ -2674,8 +2674,8 @@ argument that is 'updated', thus returned from the function. fold will call
 the function for each element in a sequence, updating the start value.
 Example: fold({1, 2, 3}, intAdd, 2) => 8
 intAdd(1, 2) => 3, intAdd(2, 3) => 5, intAdd(3, 5) => 8 =#
-function fold(inList::List{T}, inFoldFunc::FoldFunc, inStartValue::FT)  where {T, FT}
-  local outResult::FT = inStartValue
+function fold(inList::List{T}, inFoldFunc::FoldFunc, inStartValue::FT, ::Type{TO} = Any)  where {T, FT, TO}
+  local outResult::TO = inStartValue
 
   for e in inList
     outResult = inFoldFunc(e, outResult)
@@ -2684,8 +2684,8 @@ function fold(inList::List{T}, inFoldFunc::FoldFunc, inStartValue::FT)  where {T
 end
 
 #= Same as fold, but with reversed order on the fold function arguments. =#
-function foldr(inList::List{T}, inFoldFunc::FoldFunc, inStartValue::FT)  where {T, FT}
-  local outResult::FT = inStartValue
+function foldr(inList::List{T}, inFoldFunc::FoldFunc, inStartValue::FT, ::Type{TO} = Any)  where {T, FT, TO}
+  local outResult::TO = inStartValue
 
   for e in inList
     outResult = inFoldFunc(outResult, e)
@@ -2697,8 +2697,8 @@ end
 argument that is 'updated', thus returned from the function, and a constant
 argument that is not updated. fold will call the function for each element in
 a sequence, updating the start value. =#
-function fold1(inList::List{T}, inFoldFunc::FoldFunc, inExtraArg::ArgT1, inStartValue::FT)  where {T, FT, ArgT1}
-  local outResult::FT = inStartValue
+function fold1(inList::List{T}, inFoldFunc::FoldFunc, inExtraArg::ArgT1, inStartValue::FT, ::Type{TO} = Any)  where {T, FT, ArgT1, TO}
+  local outResult::TO = inStartValue
 
   for e in inList
     outResult = inFoldFunc(e, inExtraArg, outResult)
@@ -2707,8 +2707,8 @@ function fold1(inList::List{T}, inFoldFunc::FoldFunc, inExtraArg::ArgT1, inStart
 end
 
 #= Same as fold1, but with reversed order on the fold function arguments. =#
-function fold1r(inList::List{T}, inFoldFunc::FoldFunc, inExtraArg::ArgT1, inStartValue::FT)  where {T, FT, ArgT1}
-  local outResult::FT = inStartValue
+function fold1r(inList::List{T}, inFoldFunc::FoldFunc, inExtraArg::ArgT1, inStartValue::FT, ::Type{TO} = Any)  where {T, FT, ArgT1, TO}
+  local outResult::TO = inStartValue
 
   for e in inList
     outResult = inFoldFunc(outResult, e, inExtraArg)
@@ -2720,8 +2720,8 @@ end
 argument that is 'updated', thus returned from the function, and two constant
 arguments that is not updated. fold will call the function for each element in
 a sequence, updating the start value. =#
-function fold2(inList::List{T}, inFoldFunc::FoldFunc, inExtraArg1::ArgT1, inExtraArg2::ArgT2, inStartValue::FT)  where {T, FT, ArgT1, ArgT2}
-  local outResult = inStartValue
+function fold2(inList::List{T}, inFoldFunc::FoldFunc, inExtraArg1::ArgT1, inExtraArg2::ArgT2, inStartValue::FT, ::Type{TO} = Any)  where {T, FT, ArgT1, ArgT2, TO}
+  local outResult::TO = inStartValue
 
   for e in inList
     outResult = inFoldFunc(e, inExtraArg1, inExtraArg2, outResult)
@@ -2781,8 +2781,8 @@ function foldList2(inList::List{List{T}}, inFoldFunc::FoldFunc, inExtraArg1::Arg
 end
 
 #= Same as fold2, but with reversed order on the fold function arguments. =#
-function fold2r(inList::List{T}, inFoldFunc::FoldFunc, inExtraArg1::ArgT1, inExtraArg2::ArgT2, inStartValue::FT)  where {T, FT, ArgT1, ArgT2}
-  local outResult::FT = inStartValue
+function fold2r(inList::List{T}, inFoldFunc::FoldFunc, inExtraArg1::ArgT1, inExtraArg2::ArgT2, inStartValue::FT, ::Type{TO} = Any)  where {T, FT, ArgT1, ArgT2, TO}
+  local outResult::TO = inStartValue
 
   for e in inList
     outResult = inFoldFunc(outResult, e, inExtraArg1, inExtraArg2)
@@ -2794,8 +2794,8 @@ end
 argument that is 'updated', thus returned from the function, and three constant
 arguments that is not updated. fold will call the function for each element in
 a sequence, updating the start value. =#
-function fold3(inList::List{T}, inFoldFunc::FoldFunc, inExtraArg1::ArgT1, inExtraArg2::ArgT2, inExtraArg3::ArgT3, inStartValue::FT)  where {T, FT, ArgT1, ArgT2, ArgT3}
-  local outResult::FT = inStartValue
+function fold3(inList::List{T}, inFoldFunc::FoldFunc, inExtraArg1::ArgT1, inExtraArg2::ArgT2, inExtraArg3::ArgT3, inStartValue::FT, ::Type{TO} = Any)  where {T, FT, ArgT1, ArgT2, ArgT3, TO}
+  local outResult::TO = inStartValue
 
   for e in inList
     outResult = inFoldFunc(e, inExtraArg1, inExtraArg2, inExtraArg3, outResult)
@@ -3269,6 +3269,15 @@ function flatten(inList::List{Any})
   end
 end
 
+function flatten(inList::List)
+  local outList::List = nil
+  for lst in inList
+    outList = listAppend(lst, outList)
+  end
+  outList
+end
+
+
 function flattenReverse(::Nil{Any})
   nil
 end
@@ -3430,7 +3439,7 @@ end
 #= Takes two lists and a function and threads (interleaves) and maps the
 elements of two lists, creating a new list.
 Example: threadMap({1, 2}, {3, 4}, intAdd) => {1+3, 2+4} =#
-function threadMap(inList1::List{T1}, inList2::List{T2}, inMapFunc::MapFunc)  where {T1, T2, TO}
+function threadMap(inList1::List{T1}, inList2::List{T2}, inMapFunc::MapFunc, ::Type{TO} = Any)  where {T1, T2, TO}
   local outList::List{TO}
 
   outList = list(@do_threaded_for inMapFunc(e1, e2) (e1, e2) (inList1, inList2))
@@ -3441,15 +3450,15 @@ end
 elements of two lists, creating a new list. The order of the result list
 will be reversed compared to the input lists.
 Example: threadMap({1, 2}, {3, 4}, intAdd) => {2+4, 1+3} =#
-function threadMapReverse(inList1::List{T1}, inList2::List{T2}, inMapFunc::MapFunc)  where {T1, T2}
-  local outList::List{Any}
+function threadMapReverse(inList1::List{T1}, inList2::List{T2}, inMapFunc::MapFunc, ::Type{TO} = Any)  where {T1, T2, TO}
+  local outList::List{TO}
 
   outList = listReverse(@do_threaded_for inMapFunc(e1, e2) (e1, e2) (inList1, inList2))
   outList
 end
 
 #= Like threadMap, but returns two lists instead of one. =#
-function threadMap_2(inList1::List{T1}, inList2::List{T2}, inMapFunc::MapFunc)  where {T1, T2, TO1, TO2}
+function threadMap_2(inList1::List{T1}, inList2::List{T2}, inMapFunc::MapFunc, ::Type{TO1} = Any, ::Type{TO2} = Any)  where {T1, T2, TO1, TO2}
   local outList2::List{TO2} = nil
   local outList1::List{TO1} = nil
 
@@ -3472,15 +3481,15 @@ end
 #= Takes two lists of lists and a function and threads (interleaves) and maps
 the elements of the two lists, creating a new list.
 Example: threadMapList({{1, 2}}, {{3, 4}}, intAdd) => {{1 + 3, 2 + 4}} =#
-function threadMapList(inList1::List{List{T1}}, inList2::List{List{T2}}, inMapFunc::MapFunc)  where {T1, T2}
-  local outList::List{List{Any}}
+function threadMapList(inList1::List{List{T1}}, inList2::List{List{T2}}, inMapFunc::MapFunc, ::Type{TO} = Any)  where {T1, T2, TO}
+  local outList::List{List{TO}}
 
   outList = list(@do_threaded_for threadMap(lst1, lst2, inMapFunc) (lst1, lst2) (inList1, inList2))
   outList
 end
 
 #= Like threadMapList, but returns two lists instead of one. =#
-function threadMapList_2(inList1::List{List{T1}}, inList2::List{List{T2}}, inMapFunc::MapFunc)  where {T1, T2, TO1, TO2}
+function threadMapList_2(inList1::List{List{T1}}, inList2::List{List{T2}}, inMapFunc::MapFunc, ::Type{TO1} = Any, ::Type{TO2} = Any)  where {T1, T2, TO1, TO2}
   local outList2::List{List{TO2}} = nil
   local outList1::List{List{TO1}} = nil
 
