@@ -408,6 +408,10 @@ function appendElt(inElement::T, inList::List{T})  where {T}
   outList
 end
 
+function appendLastList(inListList, inList::Nil{Any})
+  inListList
+end
+
 #= Appends a list to the last list in a list of lists. =#
 function appendLastList(inListList::List{List{T}}, inList::List{T})  where {T}
   local outListList::List{List{T}}
@@ -3264,8 +3268,10 @@ end
 function flatten(inList::List{Any})
   if listEmpty(listHead(inList)) && listEmpty(listRest(inList))
     nil
+  elseif listEmpty(listHead(inList)) && listEmpty(flatten(listRest(inList)))
+    nil
   else
-    @assert (false)
+    inList
   end
 end
 
