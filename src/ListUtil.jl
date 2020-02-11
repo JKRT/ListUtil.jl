@@ -1727,6 +1727,8 @@ function unionEltOnTrue(inElement::T, inList::List{T}, inCompFunc::CompFunc)  wh
   outList
 end
 
+unionEltOnTrue(inElement, inList; inCompFunc) = unionEltOnTrue(inElement, inList, inCompFunc)
+
 #= Takes two lists and returns the union of the two lists, i.e. a list of all
 elements combined without duplicates. Example:
 union({0, 1}, {2, 1}) => {0, 1, 2} =#
@@ -1775,13 +1777,6 @@ function unionOnTrue(inList1::List{T}, inList2::List{T}, inCompFunc::CompFunc)  
   outUnion
 end
 
-function unionAppendListOnTrue(inList::List{T}, inUnion::List{T}, inCompFunc::CompFunc)  where {T}
-  local outUnion::List{T}
-
-  outUnion = fold(inList, (inCompFunc) -> unionEltOnTrue(inCompFunc = inCompFunc), inUnion)
-  outUnion
-end
-
 #= Takes a list of lists and returns the union of the sublists.
 Example: unionList({1}, {1, 2}, {3, 4}, {5}}) => {1, 2, 3, 4, 5} =#
 
@@ -1800,19 +1795,35 @@ function unionList(inList::List{List{T}})  where {T}
   outUnion
 end
 
+
+function unionOnTrueList(inList::Nil{Any}, inCompFunc::CompFunc)
+  nil
+end
+
+function unionOnTrueList(inList::Cons{Nil{Any}}, inCompFunc::CompFunc)
+  nil
+end
+
 #= Takes a list of lists and a comparison function over two elements of the
 lists. It returns the union of all sublists using the comparison function
 for identity.
 Example:
 unionOnTrueList({{1}, {1, 2}, {3, 4}}, intEq) => {1, 2, 3, 4} =#
-function unionOnTrueList(inList::List{List{T}}, inCompFunc::CompFunc)  where {T}
-  local outUnion::List{T}
+function unionOnTrueList(inList::List, inCompFunc::CompFunc)
+  local outUnion::List
 
   outUnion = if listEmpty(inList)
     nil
   else
     reduce1(inList, unionOnTrue, inCompFunc)
   end
+  outUnion
+end
+
+function unionAppendListOnTrue(inList::List{T}, inUnion::List{T}, inCompFunc::CompFunc)  where {T}
+  local outUnion::List{T}
+
+  outUnion = unionOnTrueList(list(inList, inUnion), inCompFunc)
   outUnion
 end
 
@@ -3266,12 +3277,16 @@ function flatten(inList::List{List{T}}) where {T}
 end
 
 function flatten(inList::List{Any})
+  local outList::List = nil
   if listEmpty(listHead(inList)) && listEmpty(listRest(inList))
     nil
   elseif listEmpty(listHead(inList)) && listEmpty(flatten(listRest(inList)))
     nil
   else
-    inList
+    for lst in inList
+      outList = listAppend(lst, outList)
+    end
+    outList
   end
 end
 
