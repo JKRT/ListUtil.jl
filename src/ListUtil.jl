@@ -34,40 +34,40 @@ using MetaModelica
 #= ExportAll is not good practice but it makes it so that we do not have to write export after each function :( =#
 using ExportAll
 
-ApplyFunc = Function
-Comp = Function
-CompFunc = Function
-CompareFunc = Function
-EqFunc = Function
-FilterFunc = Function
-FilterMapFunc = Function
-FindFunc = Function
-FindMapFunc = Function
-FoldFunc = Function
-FuncType = Function
-GenerateFunc = Function
-MapBFunc = Function
-MapFunc = Function
-MapFunc1 = Function
-MapFunc2 = Function
-PredFunc = Function
-Predicate = Function
-PredicateFunc = Function
-ReduceFunc = Function
-SelectFunc = Function
-UpdateFunc = Function
+const ApplyFunc = Function
+const Comp = Function
+const CompFunc = Function
+const CompareFunc = Function
+const EqFunc = Function
+const FilterFunc = Function
+const FilterMapFunc = Function
+const FindFunc = Function
+const FindMapFunc = Function
+const FoldFunc = Function
+const FuncType = Function
+const GenerateFunc = Function
+const MapBFunc = Function
+const MapFunc = Function
+const MapFunc1 = Function
+const MapFunc2 = Function
+const PredFunc = Function
+const Predicate = Function
+const PredicateFunc = Function
+const ReduceFunc = Function
+const SelectFunc = Function
+const UpdateFunc = Function
 
 import ArrayUtil
 using MetaModelica.Dangerous: listReverseInPlace, arrayGetNoBoundsChecking, arrayUpdateNoBoundsChecking, arrayCreateNoInit
 import MetaModelica.Dangerous
 import DoubleEnded
 
-TO= Any
-TO1 = Any
-TO2 = Any
-TO3 = Any
-TO4 = Any
-TO5 = Any
+const TO = Any
+const TO1 = Any
+const TO2 = Any
+const TO3 = Any
+const TO4 = Any
+const TO5 = Any
 
 #= Creates a list from an element. =#
 function create(inElement::T)  where {T}
@@ -290,9 +290,6 @@ end
 #= Adds the element to the front of the list if the condition is true. =#
 function consOnTrue(inCondition::Bool, inElement::T1, inList::List{T2})  where {T1, T2}
   local outList::List{T1}
-
-  @assert !(T2 <: T1)
-
   outList = if inCondition
     _cons(inElement, inList)
   else
@@ -732,8 +729,6 @@ function stripN(inList::List{T}, inN::ModelicaInteger)  where {T}
 end
 
 function heapSortIntList(lst::List{<:ModelicaInteger}) ::List{ModelicaInteger}
-
-
   lst = begin
     @match lst begin
       nil()  => begin
@@ -752,42 +747,48 @@ function heapSortIntList(lst::List{<:ModelicaInteger}) ::List{ModelicaInteger}
   lst
 end
 
-#= Sorts a list given an ordering function with the mergesort algorithm.
+function sort(inList::Nil{T}, inCompFunc::CompareFunc) where T
+  nil
+end
+
+""" 
+Sorts a list given an ordering function with the mergesort algorithm.
 Example:
-sort({2, 1, 3}, intGt) => {1, 2, 3}
-sort({2, 1, 3}, intLt) => {3, 2, 1} =#
-function sort(inList::List{T}, inCompFunc::CompareFunc)  where {T}
-  local outList::List{T} = nil
+  sort({2, 1, 3}, intGt) => {1, 2, 3}
+  sort({2, 1, 3}, intLt) => {3, 2, 1} 
+"""
+function sort(inList::Cons{T}, inCompFunc::CompareFunc) where {T}
+  # local outList = nil
+  # local rest::List{T} = inList
+  # local e1::T
+  # local e2::T
+  # local left::List{T}
+  # local right::List{T}
+  # local middle::ModelicaInteger
 
-  local rest::List{T} = inList
-  local e1::T
-  local e2::T
-  local left::List{T}
-  local right::List{T}
-  local middle::ModelicaInteger
-
-  if ! listEmpty(rest)
-    @match _cons(e1, rest) = rest
-    if listEmpty(rest)
-      outList = inList
-    else
-      @match _cons(e2, rest) = rest
-      if listEmpty(rest)
-        outList = if inCompFunc(e2, e1)
-          inList
-        else
-          list(e2, e1)
-        end
-      else
-        middle = intDiv(listLength(inList), 2)
-        (left, right) = split(inList, middle)
-        left = sort(left, inCompFunc)
-        right = sort(right, inCompFunc)
-        outList = merge(left, right, inCompFunc, nil)
-      end
-    end
-  end
-  outList
+  # if ! listEmpty(rest)
+  #   @match _cons(e1, rest) = rest
+  #   if listEmpty(rest)
+  #     outList = inList
+  #   else
+  #     @match _cons(e2, rest) = rest
+  #     if listEmpty(rest)
+  #       outList = if inCompFunc(e2, e1)
+  #         inList
+  #       else
+  #         list(e2, e1)
+  #       end
+  #     else
+  #       middle = intDiv(listLength(inList), 2)
+  #       (left, right) = split(inList, middle)
+  #       left = sort(left, inCompFunc)
+  #       right = sort(right, inCompFunc)
+  #       outList = merge(left, right, inCompFunc, nil)
+  #     end
+  #   end
+  # end
+  # outList
+  MetaModelica.sort(inList, inCompFunc)
 end
 
 #= Returns a list of all duplicates in a sorted list, using the given comparison
@@ -898,7 +899,6 @@ end
 #= Helper function to sort, merges two sorted lists. =#
 function merge(inLeft::List{T}, inRight::List{T}, inCompFunc::CompareFunc, acc::List{T})  where {T}
   local outList::List{T}
-
   outList = begin
     local b::Bool
     local l::T
@@ -1692,7 +1692,6 @@ function unionIntN(inList1::List{<:ModelicaInteger}, inList2::List{<:ModelicaInt
   local outUnion::List{ModelicaInteger} = nil
 
   local a::Array{ModelicaInteger}
-
   if inN > 0
     a = arrayCreate(inN, 0)
     a = addPos(inList1, a, 1)
@@ -1713,10 +1712,7 @@ Example:
 unionElt(1, {2, 3}) => {1, 2, 3}
 unionElt(0, {0, 1, 2}) => {0, 1, 2} =#
 function unionElt(inElement::T, inList::List{T})  where {T}
-  local outList::List{T}
-
-  outList = consOnTrue(! listMember(inElement, inList), inElement, inList)
-  outList
+  return consOnTrue(! listMember(inElement, inList), inElement, inList)
 end
 
 #= Works as unionElt, but with a compare function. =#
@@ -1729,20 +1725,38 @@ end
 
 unionEltOnTrue(inElement, inList; inCompFunc) = unionEltOnTrue(inElement, inList, inCompFunc)
 
-#= Takes two lists and returns the union of the two lists, i.e. a list of all
-elements combined without duplicates. Example:
-union({0, 1}, {2, 1}) => {0, 1, 2} =#
-function union(inList1::List{T}, inList2::List{T})  where {T}
-  local outUnion::List{T} = nil
 
-  for e in inList1
-    outUnion = unionElt(e, outUnion)
-  end
-  for e in inList2
-    outUnion = unionElt(e, outUnion)
-  end
-  outUnion = listReverseInPlace(outUnion)
-  outUnion
+# function union(inList1::Cons{T}, inList2::Cons{T})::Cons{T}  where {T}
+#   local outUnion::List{T} = nil
+#   for e in inList1
+#     outUnion = unionElt(e, outUnion)
+#   end
+#   for e in inList2
+#     outUnion = unionElt(e, outUnion)
+#   end
+#   listReverseInPlace(outUnion)
+# end
+"""
+ Takes two lists and returns the union of the two lists, i.e. a list of all
+  elements combined without duplicates. Example:
+  union({0, 1}, {2, 1}) => {0, 1, 2} 
+"""
+function union(inList1::Cons{T}, inList2::Cons{T}) where {T}
+  local tmp1 = listArray(inList1)
+  local tmp2 = listArray(inList2)
+  arrayList(Base.union(tmp1, tmp2))
+end
+
+function union(inList1::Nil{T}, inList2::Nil{T}) where {T}
+  return nil
+end
+
+function union(inList1::Cons{T}, inList2::Nil) where {T}
+  return inList1
+end
+
+function union(inList1::Nil, inList2::Cons{T}) where {T}
+  return inList2
 end
 
 #= As union but this function assume that List1 is already union.
@@ -3290,7 +3304,7 @@ function flatten(inList::List{Any})
   end
 end
 
-function flatten(inList::List)
+function flatten(inList::Cons{T}) where {T}
   local outList::List = nil
   for lst in inList
     outList = listAppend(lst, outList)
