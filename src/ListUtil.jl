@@ -5073,17 +5073,15 @@ function splitEqualPrefix(inFullList::List{T1}, inPrefixList::List{T2}, inEqFunc
   (outPrefix, outRest)
 end
 
-#= Takes a two-dimensional list and creates a list combinations
+"""
+Takes a two-dimensional list and creates a list combinations
 given by the cartesian product of the sublists.
-
 Ex: combination({{1, 2}, {3}, {4, 5}}) =>
-{{1, 3, 4}, {1, 3, 5}, {2, 3, 4}, {2, 3, 5}}
-=#
+  {{1, 3, 4}, {1, 3, 5}, {2, 3, 4}, {2, 3, 5}}
+"""
 function combination(inElements::List{List{TI}})  where {TI}
   local outElements::List{List{TI}}
-
   local elems::List{List{TI}}
-
   if listEmpty(inElements)
     outElements = nil
   else
@@ -5093,13 +5091,16 @@ function combination(inElements::List{List{TI}})  where {TI}
   outElements
 end
 
-function combination_tail(inElements::List{List{TI}}, inCombination::List{TI}, inAccumElems::List{List{TI}})  where {TI}
-  local outElements::List{List{TI}}
-
+"""
+  Helper function for combination.
+  The first and last arguments should be a list of lists.
+"""
+function combination_tail(inElements::List, inCombination::List, inAccumElems::List)
+  local outElements::List{List}
   outElements = begin
-    local head::List{TI}
-    local rest::List{List{TI}}
-    local acc::List{List{TI}}
+    local head::List
+    local rest::List{List}
+    local acc::List{List}
     @match inElements begin
       head <| rest  => begin
         acc = inAccumElems
@@ -5108,7 +5109,6 @@ function combination_tail(inElements::List{List{TI}}, inCombination::List{TI}, i
         end
         acc
       end
-
       _  => begin
         _cons(listReverse(inCombination), inAccumElems)
       end
@@ -5117,12 +5117,12 @@ function combination_tail(inElements::List{List{TI}}, inCombination::List{TI}, i
   outElements
 end
 
-#= Takes a two-dimensional list and calls the given function on the combinations
+""" 
+Takes a two-dimensional list and calls the given function on the combinations
 given by the cartesian product of the sublists.
-
 Ex: combinationMap({{1, 2}, {3}, {4, 5}}, func) =>
 {func({1, 3, 4}), func({1, 3, 5}), func({2, 3, 4}), func({2, 3, 5})}
-=#
+"""
 function combinationMap(inElements::List{List{TI}}, inMapFunc::MapFunc)  where {TI}
   local outElements::List{Any}
 
