@@ -61,6 +61,7 @@ import ArrayUtil
 using MetaModelica.Dangerous: listReverseInPlace, arrayGetNoBoundsChecking, arrayUpdateNoBoundsChecking, arrayCreateNoInit
 import MetaModelica.Dangerous
 import DoubleEnded
+import ImmutableList
 
 const TO = Any
 const TO1 = Any
@@ -787,8 +788,8 @@ function sort(inList::Cons{T}, inCompFunc::CompareFunc) where {T}
   #     end
   #   end
   # end
-  # outList
-  MetaModelica.sort(inList, inCompFunc)
+  # outListx
+  ImmutableList.sort(inList, inCompFunc)
 end
 
 #= Returns a list of all duplicates in a sorted list, using the given comparison
