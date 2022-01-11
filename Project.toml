@@ -1,7 +1,7 @@
 name = "ListUtil"
 uuid = "b2a72b7e-c1ef-11e9-3a87-6ddc5900c366"
 authors = ["johti <johti17@liu.se>"]
-version = "0.1.1"
+version = "0.1.2"
 
 [deps]
 ArrayUtil = "53cd29f2-c28d-11e9-1567-bd5452eeb1a0"
