@@ -358,8 +358,8 @@ function consN(size::ModelicaInteger, inElement::T, inList::List{T})  where {T}
 end
 
 #= Appends the elements from list1 in reverse order to list2. =#
-function append_reverse(inList1::List{T}, inList2::List{T})  where {T}
-  local outList::List{T} = inList2
+function append_reverse(inList1::List, inList2::List)
+  local outList::List = inList2
 
   #=  Do not optimize the case listEmpty(inList2) and listLength(inList1)==1
   =#
