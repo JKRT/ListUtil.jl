@@ -358,8 +358,8 @@ function consN(size::ModelicaInteger, inElement::T, inList::List{T})  where {T}
 end
 
 #= Appends the elements from list1 in reverse order to list2. =#
-function append_reverse(inList1::List{T}, inList2::List{T})  where {T}
-  local outList::List{T} = inList2
+function append_reverse(inList1::List, inList2::List)
+  local outList::List = inList2
 
   #=  Do not optimize the case listEmpty(inList2) and listLength(inList1)==1
   =#
@@ -752,11 +752,11 @@ function sort(inList::Nil{T}, inCompFunc::CompareFunc) where T
   nil
 end
 
-""" 
+"""
 Sorts a list given an ordering function with the mergesort algorithm.
 Example:
   sort({2, 1, 3}, intGt) => {1, 2, 3}
-  sort({2, 1, 3}, intLt) => {3, 2, 1} 
+  sort({2, 1, 3}, intLt) => {3, 2, 1}
 """
 function sort(inList::Cons{T}, inCompFunc::CompareFunc) where {T}
   # local outList = nil
@@ -1740,7 +1740,7 @@ unionEltOnTrue(inElement, inList; inCompFunc) = unionEltOnTrue(inElement, inList
 """
  Takes two lists and returns the union of the two lists, i.e. a list of all
   elements combined without duplicates. Example:
-  union({0, 1}, {2, 1}) => {0, 1, 2} 
+  union({0, 1}, {2, 1}) => {0, 1, 2}
 """
 function union(inList1::Cons{T}, inList2::Cons{T}) where {T}
   local tmp1 = listArray(inList1)
@@ -3246,9 +3246,7 @@ function. Example:
 reduce({1, 2, 3}, intAdd) => 6 =#
 function reduce(inList::List{T}, inReduceFunc::ReduceFunc)  where {T}
   local outResult::T
-
   local rest::List{T}
-
   @match _cons(outResult, rest) = inList
   for e in rest
     outResult = inReduceFunc(outResult, e)
@@ -5118,7 +5116,7 @@ function combination_tail(inElements::List, inCombination::List, inAccumElems::L
   outElements
 end
 
-""" 
+"""
 Takes a two-dimensional list and calls the given function on the combinations
 given by the cartesian product of the sublists.
 Ex: combinationMap({{1, 2}, {3}, {4, 5}}, func) =>
