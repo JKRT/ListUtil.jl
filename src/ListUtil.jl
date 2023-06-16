@@ -2699,14 +2699,15 @@ function map2List(inListList::List{List{TI}}, inFunc::MapFunc, inArg1::ArgT1, in
   outListList
 end
 
-#= Takes a list and a function operating on list elements having an extra
+"""
+Takes a list and a function operating on list elements having an extra
 argument that is 'updated', thus returned from the function. fold will call
 the function for each element in a sequence, updating the start value.
 Example: fold({1, 2, 3}, intAdd, 2) => 8
-intAdd(1, 2) => 3, intAdd(2, 3) => 5, intAdd(3, 5) => 8 =#
-function fold(inList::List{T}, inFoldFunc::FoldFunc, inStartValue::FT, ::Type{TO} = Any)  where {T, FT, TO}
-  local outResult::TO = inStartValue
-
+intAdd(1, 2) => 3, intAdd(2, 3) => 5, intAdd(3, 5) => 8
+"""
+function fold(inList::List, inFoldFunc::FoldFunc, inStartValue)
+  local outResult = inStartValue
   for e in inList
     outResult = inFoldFunc(e, outResult)
   end
@@ -2976,10 +2977,8 @@ function and updated. =#
 function mapFold2(inList::List{TI}, inFunc::FuncType, inArg1::FT1, inArg2::FT2)  where {TI, FT1, FT2}
   local outArg2::FT2 = inArg2
   local outArg1::FT1 = inArg1
-  local outList::List{Any} = nil
-
-  local res::Any
-
+  local outList::List = nil
+  local res
   for e in inList
     (res, outArg1, outArg2) = inFunc(e, outArg1, outArg2)
     outList = _cons(res, outList)
@@ -3048,15 +3047,15 @@ function mapFold5(inList::List{TI}, inFunc::FuncType, inArg1::FT1, inArg2::FT2, 
   (outList, inArg1, inArg2, inArg3, inArg4, inArg5)
 end
 
-#= Takes a list, an extra argument, an extra constant argument, and a function.
+"""
+Takes a list, an extra argument, an extra constant argument, and a function.
 The function will be applied to each element in the list, and the extra
-argument will be passed to the function and updated. =#
-function map1Fold(inList::List{TI}, inFunc::FuncType, inConstArg::ArgT1, inArg::FT)  where {TI, FT, ArgT1}
-  local outArg::FT = inArg
+argument will be passed to the function and updated.
+"""
+function map1Fold(inList::List{TI}, inFunc::FuncType, inConstArg::ArgT1, inArg)  where {TI, ArgT1}
+  local outArg = inArg
   local outList::List{Any} = nil
-
   local res::Any
-
   for e in inList
     (res, outArg) = inFunc(e, inConstArg, outArg)
     outList = _cons(res, outList)
