@@ -31,7 +31,6 @@
 module ListUtil
 
 using MetaModelica
-#= ExportAll is not good practice but it makes it so that we do not have to write export after each function :( =#
 using ExportAll
 
 const ApplyFunc = Function
@@ -70,13 +69,13 @@ const TO3 = Any
 const TO4 = Any
 const TO5 = Any
 
-#= Creates a list from an element. =#
+""" Creates a list from an element. """
 function create(inElement::T)  where {T}
   local outList::List{T} = list(inElement)
   outList
 end
 
-#= Creates a list from two elements. =#
+""" Creates a list from two elements. """
 function create2(inElement1::T, inElement2::T)  where {T}
   local outList::List{T} = list(inElement1, inElement2)
   outList
@@ -183,7 +182,7 @@ function fromOption(inElement::Option{T})  where {T}
   outList
 end
 
-#= Fails if the given list is not empty. =#
+""" Fails if the given list is not empty. """
 function assertIsEmpty(inList::List{T})  where {T}
   @match nil = inList
 end
@@ -288,7 +287,7 @@ function consr(inList::List{T}, inElement::T)  where {T}
   outList
 end
 
-#= Adds the element to the front of the list if the condition is true. =#
+""" Adds the element to the front of the list if the condition is true. """
 function consOnTrue(inCondition::Bool, inElement::T1, inList::List{T2})  where {T1, T2}
   local outList::List{T1}
   outList = if inCondition
@@ -333,7 +332,7 @@ function consOption(inElement::Option{T}, inList::List{T})  where {T}
   outList
 end
 
-#= Adds an element to one of two lists, depending on the given boolean value. =#
+""" Adds an element to one of two lists, depending on the given boolean value. """
 function consOnBool(inValue::Bool, inElement::T, trueList::List{T}, falseList::List{T})  where {T}
 
 
@@ -357,7 +356,7 @@ function consN(size::ModelicaInteger, inElement::T, inList::List{T})  where {T}
   inList
 end
 
-#= Appends the elements from list1 in reverse order to list2. =#
+""" Appends the elements from list1 in reverse order to list2. """
 function append_reverse(inList1::List, inList2::List)
   local outList::List = inList2
 
@@ -373,7 +372,7 @@ function append_reverse(inList1::List, inList2::List)
   outList
 end
 
-#= Appends the elements from list2 in reverse order to list1. =#
+""" Appends the elements from list2 in reverse order to list1. """
 function append_reverser(inList1::List{T}, inList2::List{T})  where {T}
   local outList::List{T} = inList1
 
@@ -389,7 +388,7 @@ function append_reverser(inList1::List{T}, inList2::List{T})  where {T}
   outList
 end
 
-#= Appends two lists in reverse order compared to listAppend. =#
+""" Appends two lists in reverse order compared to listAppend. """
 function appendr(inList1::List{T}, inList2::List{T})  where {T}
   local outList::List{T}
 
@@ -406,11 +405,11 @@ function appendElt(inElement::T, inList::List{T})  where {T}
   outList
 end
 
-function appendLastList(inListList, inList::Nil{Any})
+function appendLastList(inListList, inList::Nil)
   inListList
 end
 
-#= Appends a list to the last list in a list of lists. =#
+""" Appends a list to the last list in a list of lists. """
 function appendLastList(inListList::List{List{T}}, inList::List{T})  where {T}
   local outListList::List{List{T}}
 
@@ -519,7 +518,7 @@ function set(inList::List{T}, inN::ModelicaInteger, inElement::T)  where {T}
   outList
 end
 
-#= Returns the first element of a list. Fails if the list is empty. =#
+""" Returns the first element of a list. Fails if the list is empty. """
 function first(inList::List{T})  where {T}
   local out::T
 
@@ -554,7 +553,7 @@ function firstOrEmpty(inList::List{T})  where {T}
   outList
 end
 
-#= Returns the second element of a list. Fails if the list is empty. =#
+""" Returns the second element of a list. Fails if the list is empty. """
 function second(inList::List{T})  where {T}
   local outSecond::T
 
@@ -562,7 +561,7 @@ function second(inList::List{T})  where {T}
   outSecond
 end
 
-#= Returns the last element of a list. Fails if the list is empty. =#
+""" Returns the last element of a list. Fails if the list is empty. """
 function last(inList::List{T})  where {T}
   local outLast::T
 
@@ -575,7 +574,7 @@ function last(inList::List{T})  where {T}
   outLast
 end
 
-#= Returns the last cons-cell of a list. Fails if the list is empty. Also returns the list length. =#
+""" Returns the last cons-cell of a list. Fails if the list is empty. Also returns the list length. """
 function lastElement(inList::List{T})  where {T}
   local listLength::ModelicaInteger = 0
   local lst::List{T}
@@ -620,7 +619,7 @@ function secondLast(inList::List{T})  where {T}
   outSecondLast
 end
 
-#= Returns the last N elements of a list. =#
+""" Returns the last N elements of a list. """
 function lastN(inList::List{T}, inN::ModelicaInteger)  where {T}
   local outList::List{T}
 
@@ -632,7 +631,7 @@ function lastN(inList::List{T}, inN::ModelicaInteger)  where {T}
   outList
 end
 
-#= Returns all elements except for the first in a list. =#
+""" Returns all elements except for the first in a list. """
 function rest(inList::List{T})  where {T}
   local outList::List{T}
 
@@ -640,7 +639,7 @@ function rest(inList::List{T})  where {T}
   outList
 end
 
-#= Returns all elements except for the first in a list. =#
+""" Returns all elements except for the first in a list. """
 function restCond(cond::Bool, inList::List{T})  where {T}
   local outList::List{T}
 
@@ -748,7 +747,7 @@ function heapSortIntList(lst::List{<:ModelicaInteger}) ::List{ModelicaInteger}
   lst
 end
 
-function sort(inList::Nil{T}, inCompFunc::CompareFunc) where T
+function sort(inList::Nil, inCompFunc::CompareFunc)
   nil
 end
 
@@ -810,7 +809,7 @@ function sortedDuplicates(inList::List{T}, inCompFunc::CompareFunc #= Equality c
   outDuplicates
 end
 
-#= The input is a sorted list. The functions checks if all elements are unique. =#
+""" The input is a sorted list. The functions checks if all elements are unique. """
 function sortedListAllUnique(lst::List{T}, compare::CompareFunc)  where {T}
   local allUnique::Bool = false
 
@@ -897,7 +896,7 @@ function sortedUniqueOnlyDuplicates(inList::List{T}, inCompFunc::CompareFunc)  w
   outDuplicateElements
 end
 
-#= Helper function to sort, merges two sorted lists. =#
+""" Helper function to sort, merges two sorted lists. """
 function merge(inLeft::List{T}, inRight::List{T}, inCompFunc::CompareFunc, acc::List{T})  where {T}
   local outList::List{T}
   outList = begin
@@ -1049,7 +1048,7 @@ function uniqueIntNArr(inList::List{<:ModelicaInteger}, inMarkArray::Array{<:Mod
   outAccum
 end
 
-#= Helper for uniqueIntNArr1. =#
+""" Helper for uniqueIntNArr1. """
 function uniqueIntNArr1(inList::List{<:ModelicaInteger}, inLength::ModelicaInteger, inMark::ModelicaInteger, inMarkArray::Array{<:ModelicaInteger}, inAccum::List{<:ModelicaInteger}) ::List{ModelicaInteger}
   local outAccum::List{ModelicaInteger} = inAccum
 
@@ -1139,7 +1138,7 @@ function splitr(inList::List{T}, inPosition::ModelicaInteger)  where {T}
   (outList1, outList2)
 end
 
-#= Splits a list into two sublists depending on predicate function. =#
+""" Splits a list into two sublists depending on predicate function. """
 function splitOnTrue(inList::List{T}, inFunc::PredicateFunc)  where {T}
   local outFalseList::List{T} = nil
   local outTrueList::List{T} = nil
@@ -1156,7 +1155,7 @@ function splitOnTrue(inList::List{T}, inFunc::PredicateFunc)  where {T}
   (outTrueList, outFalseList)
 end
 
-#= Splits a list into two sublists depending on predicate function. =#
+""" Splits a list into two sublists depending on predicate function. """
 function split1OnTrue(inList::List{T}, inFunc::PredicateFunc, inArg1::ArgT1)  where {T, ArgT1}
   local outFalseList::List{T} = nil
   local outTrueList::List{T} = nil
@@ -1173,7 +1172,7 @@ function split1OnTrue(inList::List{T}, inFunc::PredicateFunc, inArg1::ArgT1)  wh
   (outTrueList, outFalseList)
 end
 
-#= Splits a list into two sublists depending on predicate function. =#
+""" Splits a list into two sublists depending on predicate function. """
 function split2OnTrue(inList::List{T}, inFunc::PredicateFunc, inArg1::ArgT1, inArg2::ArgT2)  where {T, ArgT1, ArgT2}
   local outFalseList::List{T} = nil
   local outTrueList::List{T} = nil
@@ -1274,7 +1273,7 @@ function splitEqualParts(inList::List{T}, inParts::ModelicaInteger)  where {T}
   outParts
 end
 
-#= Splits a list into two sublists depending on a second list of bools. =#
+""" Splits a list into two sublists depending on a second list of bools. """
 function splitOnBoolList(inList::List{T}, inBools::List{Bool})  where {T}
   local outFalseList::List{T} = nil
   local outTrueList::List{T} = nil
@@ -1298,8 +1297,12 @@ function splitOnBoolList(inList::List{T}, inBools::List{Bool})  where {T}
   (outTrueList, outFalseList)
 end
 
-#= Partitions a list of elements into sublists of length n.
-Example: partition({1, 2, 3, 4, 5}, 2) => {{1, 2}, {3, 4}, {5}} =#
+""" Partitions a list of elements into sublists of length n.
+Example:
+```
+julia> partition(list(1, 2, 3, 4, 5), 2) => {{1, 2}, {3, 4}, {5}}
+```
+"""
 function partition(inList::List{T}, inPartitionLength::ModelicaInteger)  where {T}
   local outPartitions::List{List{T}} = nil
 
@@ -1315,14 +1318,12 @@ function partition(inList::List{T}, inPartitionLength::ModelicaInteger)  where {
     outPartitions = list(inList)
     return outPartitions
   end
-  #=  Split the list into partitions.
-  =#
+  #=  Split the list into partitions. =#
   for i in 1:div(length, inPartitionLength)
     (part, lst) = split(lst, inPartitionLength)
     outPartitions = _cons(part, outPartitions)
   end
-  #=  Append the remainder of the list.
-  =#
+  #=  Append the remainder of the list. =#
   if ! listEmpty(lst)
     outPartitions = _cons(lst, outPartitions)
   end
@@ -1552,7 +1553,7 @@ function intersectionIntN(inList1::List{<:ModelicaInteger}, inList2::List{<:Mode
   outResult
 end
 
-#= Helper function to intersectionIntN. =#
+""" Helper function to intersectionIntN. """
 function intersectionIntVec(inArray::Array{<:ModelicaInteger}, inList1::List{<:ModelicaInteger}) ::List{ModelicaInteger}
   local outResult::List{ModelicaInteger} = nil
 
@@ -1564,7 +1565,7 @@ function intersectionIntVec(inArray::Array{<:ModelicaInteger}, inList1::List{<:M
   outResult
 end
 
-#= Helper function to intersectionIntN. =#
+""" Helper function to intersectionIntN. """
 function addPos(inList::List{<:ModelicaInteger}, inArray::Array{<:ModelicaInteger}, inIndex::ModelicaInteger) ::Array{ModelicaInteger}
   local outArray::Array{ModelicaInteger}
 
@@ -1716,7 +1717,7 @@ function unionElt(inElement::T, inList::List{T})  where {T}
   return consOnTrue(! listMember(inElement, inList), inElement, inList)
 end
 
-#= Works as unionElt, but with a compare function. =#
+""" Works as unionElt, but with a compare function. """
 function unionEltOnTrue(inElement::T, inList::List{T}, inCompFunc::CompFunc)  where {T}
   local outList::List{T}
 
@@ -1748,7 +1749,7 @@ function union(inList1::Cons{T}, inList2::Cons{T}) where {T}
   arrayList(Base.union(tmp1, tmp2))
 end
 
-function union(inList1::Nil{T}, inList2::Nil{T}) where {T}
+function union(inList1::Nil, inList2::Nil)
   return nil
 end
 
@@ -1795,7 +1796,7 @@ end
 #= Takes a list of lists and returns the union of the sublists.
 Example: unionList({1}, {1, 2}, {3, 4}, {5}}) => {1, 2, 3, 4, 5} =#
 
-function unionList(::Nil{Any})
+function unionList(::Nil)
   nil
 end
 
@@ -1811,11 +1812,11 @@ function unionList(inList::List{List{T}})  where {T}
 end
 
 
-function unionOnTrueList(inList::Nil{Any}, inCompFunc::CompFunc)
+function unionOnTrueList(inList::Nil, inCompFunc::CompFunc)
   nil
 end
 
-function unionOnTrueList(inList::Cons{Nil{Any}}, inCompFunc::CompFunc)
+function unionOnTrueList(inList::Cons{Nil}, inCompFunc::CompFunc)
   nil
 end
 
@@ -2392,7 +2393,7 @@ function map2Flat(inList::List{TI}, inMapFunc::MapFunc, inArg1::ArgT1, inArg2::A
   outList
 end
 
-#= More efficient than: map(map(inList, inMapFunc1), inMapFunc2) =#
+""" More efficient than: map(map(inList, inMapFunc1), inMapFunc2) """
 function mapMap(inList::List{TI}, inMapFunc1::MapFunc1, inMapFunc2::MapFunc2, ::Type{TO} = Any)  where {TI, TO}
   local outList::List{TO} = nil
 
@@ -2403,7 +2404,7 @@ function mapMap(inList::List{TI}, inMapFunc1::MapFunc1, inMapFunc2::MapFunc2, ::
   outList
 end
 
-#= More efficient than map_0(map(inList, inMapFunc1), inMapFunc2), =#
+""" More efficient than map_0(map(inList, inMapFunc1), inMapFunc2), """
 function mapMap_0(inList::List{TI}, inMapFunc1::MapFunc1, inMapFunc2::MapFunc2)  where {TI}
   for e in inList
     inMapFunc2(inMapFunc1(e))
@@ -2435,7 +2436,7 @@ function mapAllValueBool(inList::List{TI}, inMapFunc::MapFunc, inValue::VT)  whe
   outAllValue
 end
 
-#= Same as mapAllValueBool, but takes one extra argument. =#
+""" Same as mapAllValueBool, but takes one extra argument. """
 function map1AllValueBool(inList::List{TI}, inMapFunc::MapFunc, inValue::VT, inArg1::ArgT1)  where {TI, VT, ArgT1}
   local outAllValue::Bool
 
@@ -2498,7 +2499,7 @@ function mapListAllValueBool(inList::List{List{TI}}, inMapFunc::MapFunc, inValue
   outAllValue
 end
 
-#= Same as mapListAllValueBool, but takes one extra argument. =#
+""" Same as mapListAllValueBool, but takes one extra argument. """
 function map1ListAllValueBool(inList::List{List{TI}}, inMapFunc::MapFunc, inValue::VT, inArg1::ArgT1)  where {TI, VT, ArgT1}
   local outAllValue::Bool = true
 
@@ -2546,10 +2547,9 @@ function applyAndFold1(inList::List{TI}, inFoldFunc::FoldFunc, inApplyFunc::Appl
   outResult
 end
 
-#= Maps each element of a inList to Boolean type with inFunc. Stops mapping at first occurrence of true return value. =#
-function mapBoolOr(inList::List{TI}, inFunc::MapFunc)  where {TI, ArgT1}
+""" Maps each element of a inList to Boolean type with inFunc. Stops mapping at first occurrence of true return value. """
+function mapBoolOr(inList::List{TI}, inFunc::MapFunc)  where {TI}
   local res::Bool = false
-
   for e in inList
     if inFunc(e)
       res = true
@@ -2559,7 +2559,7 @@ function mapBoolOr(inList::List{TI}, inFunc::MapFunc)  where {TI, ArgT1}
   res
 end
 
-#= Maps each element of a inList to Boolean type with inFunc. Stops mapping at first occurrence of true return value. =#
+""" Maps each element of a inList to Boolean type with inFunc. Stops mapping at first occurrence of true return value. """
 function mapBoolAnd(inList::List{TI}, inFunc::MapFunc)  where {TI}
   local res::Bool = false
 
@@ -2572,10 +2572,9 @@ function mapBoolAnd(inList::List{TI}, inFunc::MapFunc)  where {TI}
   res
 end
 
-#= Maps each element of a inList to Boolean type with inFunc. Stops mapping at first occurrence of true return value. =#
-function mapMapBoolAnd(inList::List{TI}, inFunc::MapFunc, inBFunc::MapBFunc)  where {TI, TI2}
+""" Maps each element of a inList to Boolean type with inFunc. Stops mapping at first occurrence of true return value. """
+function mapMapBoolAnd(inList::List{TI}, inFunc::MapFunc, inBFunc::MapBFunc)  where {TI}
   local res::Bool = false
-
   for e in inList
     if ! inBFunc(inFunc(e))
       return res
@@ -2683,7 +2682,7 @@ function mapListReverse(inListList::List{List{TI}}, inFunc::MapFunc)  where {TI}
   outListList
 end
 
-#= Similar to mapList but with a mapping function that takes an extra argument. =#
+""" Similar to mapList but with a mapping function that takes an extra argument. """
 function map1List(inListList::List{List{TI}}, inFunc::MapFunc, inArg1::ArgT1)  where {TI, ArgT1}
   local outListList::List{List{Any}}
 
@@ -2691,7 +2690,7 @@ function map1List(inListList::List{List{TI}}, inFunc::MapFunc, inArg1::ArgT1)  w
   outListList
 end
 
-#= Similar to mapList but with a mapping function that takes two extra arguments. =#
+""" Similar to mapList but with a mapping function that takes two extra arguments. """
 function map2List(inListList::List{List{TI}}, inFunc::MapFunc, inArg1::ArgT1, inArg2::ArgT2)  where {TI, ArgT1, ArgT2}
   local outListList::List{List{Any}}
 
@@ -2714,7 +2713,7 @@ function fold(inList::List, inFoldFunc::FoldFunc, inStartValue)
   outResult
 end
 
-#= Same as fold, but with reversed order on the fold function arguments. =#
+""" Same as fold, but with reversed order on the fold function arguments. """
 function foldr(inList::List{T}, inFoldFunc::FoldFunc, inStartValue::FT, ::Type{TO} = Any)  where {T, FT, TO}
   local outResult::TO = inStartValue
 
@@ -2737,7 +2736,7 @@ function fold1(inList::List{T}, inFoldFunc::FoldFunc, inExtraArg::ArgT1, inStart
   outResult
 end
 
-#= Same as fold1, but with reversed order on the fold function arguments. =#
+""" Same as fold1, but with reversed order on the fold function arguments. """
 function fold1r(inList::List{T}, inFoldFunc::FoldFunc, inExtraArg::ArgT1, inStartValue::FT, ::Type{TO} = Any)  where {T, FT, ArgT1, TO}
   local outResult::TO = inStartValue
 
@@ -2811,7 +2810,7 @@ function foldList2(inList::List{List{T}}, inFoldFunc::FoldFunc, inExtraArg1::Arg
   outResult
 end
 
-#= Same as fold2, but with reversed order on the fold function arguments. =#
+""" Same as fold2, but with reversed order on the fold function arguments. """
 function fold2r(inList::List{T}, inFoldFunc::FoldFunc, inExtraArg1::ArgT1, inExtraArg2::ArgT2, inStartValue::FT, ::Type{TO} = Any)  where {T, FT, ArgT1, ArgT2, TO}
   local outResult::TO = inStartValue
 
@@ -2834,7 +2833,7 @@ function fold3(inList::List{T}, inFoldFunc::FoldFunc, inExtraArg1::ArgT1, inExtr
   outResult
 end
 
-#= Same as fold3, but with reversed order on the fold function arguments. =#
+""" Same as fold3, but with reversed order on the fold function arguments. """
 function fold3r(inList::List{T}, inFoldFunc::FoldFunc, inExtraArg1::ArgT1, inExtraArg2::ArgT2, inExtraArg3::ArgT3, inStartValue::FT)  where {T, FT, ArgT1, ArgT2, ArgT3}
   local outResult::FT = inStartValue
 
@@ -3048,11 +3047,14 @@ function mapFold5(inList::List{TI}, inFunc::FuncType, inArg1::FT1, inArg2::FT2, 
 end
 
 """
+```
+map1Fold
+```
 Takes a list, an extra argument, an extra constant argument, and a function.
 The function will be applied to each element in the list, and the extra
 argument will be passed to the function and updated.
 """
-function map1Fold(inList::List{TI}, inFunc::FuncType, inConstArg::ArgT1, inArg)  where {TI, ArgT1}
+function map1Fold(inList::List{TI}, inFunc::Function, inConstArg::ArgT1, inArg)  where {TI, ArgT1}
   local outArg = inArg
   local outList::List{Any} = nil
   local res::Any
@@ -3210,16 +3212,16 @@ function map3FoldList(inListList::List{List{TI}}, inFunc::FuncType, inConstArg1:
   (outListList, outArg)
 end
 
-#= Takes a list of lists, an extra argument and a function. The function will be
+"""
+Takes a list of lists, an extra argument and a function. The function will be
 applied to each element in the list, and the extra argument will be passed to
 the function and updated. The input and outputs of the function are joined as
-tuples. =#
-function mapFoldListTuple(inListList::List{List{TI}}, inFunc::FuncType, inFoldArg::TO)  where {TI, TO, FT}
+tuples.
+"""
+function mapFoldListTuple(inListList::List{List{TI}}, inFunc::FuncType, inFoldArg::TO)  where {TI, TO}
   local outFoldArg::TO = inFoldArg
   local outListList::List{List{TO}} = nil
-
   local res::List{TO}
-
   for lst in inListList
     (res, outFoldArg) = mapFoldTuple(lst, inFunc, outFoldArg)
     outListList = _cons(res, outListList)
@@ -3272,11 +3274,11 @@ end
 #= Takes a list of lists and flattens it out, producing one list of all elements
 of the sublists. O(len(outList))
 Example: flatten({{1, 2}, {3, 4, 5}, {6}, {}}) => {1, 2, 3, 4, 5, 6} =#
-function flatten(::Nil{Any})
+function flatten(::Nil)
   nil
 end
 
-function flatten(::Cons{Nil{Any}})
+function flatten(::Cons{Nil})
   nil
 end
 
@@ -3311,11 +3313,11 @@ function flatten(inList::Cons{T}) where {T}
 end
 
 
-function flattenReverse(::Nil{Any})
+function flattenReverse(::Nil)
   nil
 end
 
-function flattenReverse(::Cons{Nil{Any}})
+function flattenReverse(::Cons{Nil})
   nil
 end
 
@@ -3396,7 +3398,7 @@ function unzip(inTuples::List{Tuple{T1, T2}})  where {T1, T2}
   (outList1, outList2)
 end
 
-#= Like unzip, but returns the lists in reverse order. =#
+""" Like unzip, but returns the lists in reverse order. """
 function unzipReverse(inTuples::List{Tuple{T1, T2}})  where {T1, T2}
   local outList2::List{T2} = nil
   local outList1::List{T1} = nil
@@ -3490,7 +3492,7 @@ function threadMapReverse(inList1::List{T1}, inList2::List{T2}, inMapFunc::MapFu
   outList
 end
 
-#= Like threadMap, but returns two lists instead of one. =#
+""" Like threadMap, but returns two lists instead of one. """
 function threadMap_2(inList1::List{T1}, inList2::List{T2}, inMapFunc::MapFunc, ::Type{TO1} = Any, ::Type{TO2} = Any)  where {T1, T2, TO1, TO2}
   local outList2::List{TO2} = nil
   local outList1::List{TO1} = nil
@@ -3521,7 +3523,7 @@ function threadMapList(inList1::List{List{T1}}, inList2::List{List{T2}}, inMapFu
   outList
 end
 
-#= Like threadMapList, but returns two lists instead of one. =#
+""" Like threadMapList, but returns two lists instead of one. """
 function threadMapList_2(inList1::List{List{T1}}, inList2::List{List{T2}}, inMapFunc::MapFunc, ::Type{TO1} = Any, ::Type{TO2} = Any)  where {T1, T2, TO1, TO2}
   local outList2::List{List{TO2}} = nil
   local outList1::List{List{TO1}} = nil
@@ -4059,7 +4061,7 @@ function getMemberOnTrue(inValue::VT, inList::List{T}, inCompFunc::CompFunc)  wh
   outElement
 end
 
-#= Returns true if a list does not contain the given element, otherwise false. =#
+""" Returns true if a list does not contain the given element, otherwise false. """
 function notMember(inElement::T, inList::List{T})  where {T}
   local outIsNotMember::Bool
 
@@ -4510,7 +4512,7 @@ function deleteMember(inList::List{T}, inElement::T)  where {T}
   outList
 end
 
-#= Same as deleteMember, but fails if the element isn't present in the list. =#
+""" Same as deleteMember, but fails if the element isn't present in the list. """
 function deleteMemberF(inList::List{T}, inElement::T)  where {T}
   local outList::List{T}
 
@@ -4736,7 +4738,7 @@ function toString(inList::List{T}, inPrintFunc::FuncType, inListNameStr::String 
       end
 
       _  => begin
-        str = stringDelimitList(map(inList, inPrintFunc), inDelimitStr)
+        str = stringDelimitList(map(inList, inPrintFunc, String), inDelimitStr)
         str = stringAppendList(list(inListNameStr, inBeginStr, str, inEndStr))
         str
       end
@@ -4799,24 +4801,19 @@ end
 #= This function generates a list by calling the given function with the given
 argument. The elements generated by the function are accumulated in a list
 until the function returns false as the last return value. =#
-function generate(inArg::ArgT1, inFunc::GenerateFunc)  where {T, ArgT1}
-  local outList::List{T}
-
-  outList = listReverseInPlace(generateReverse(inArg, inFunc))
-  outList
+function generate(inArg::ArgT1, inFunc::GenerateFunc)  where {ArgT1}
+  listReverseInPlace(generateReverse(inArg, inFunc))
 end
 
 #= This function generates a list by calling the given function with the given
 argument. The elements generated by the function are accumulated in a list
 until the function returns false as the last return value. This function
 returns the generated list reversed. =#
-function generateReverse(inArg::ArgT1, inFunc::GenerateFunc)  where {T, ArgT1}
-  local outList::List{T} = nil
-
+function generateReverse(inArg::ArgT1, inFunc::GenerateFunc)  where {ArgT1}
+  local outList::List = nil
   local cont::Bool
   local arg::ArgT1 = inArg
   local e::T
-
   while true
     (arg, e, cont) = inFunc(arg)
     if ! cont
@@ -4827,7 +4824,7 @@ function generateReverse(inArg::ArgT1, inFunc::GenerateFunc)  where {T, ArgT1}
   outList
 end
 
-#= Like mapFold, but with the function split into a map and a fold function. =#
+""" Like mapFold, but with the function split into a map and a fold function. """
 function mapFoldSplit(inList::List{TI}, inMapFunc::MapFunc, inFoldFunc::FoldFunc, inStartValue::FT)  where {TI, FT}
   local outResult::FT = inStartValue
   local outList::List{Any} = nil
@@ -4844,7 +4841,7 @@ function mapFoldSplit(inList::List{TI}, inMapFunc::MapFunc, inFoldFunc::FoldFunc
   (outList, outResult)
 end
 
-#= Like map1Fold, but with the function split into a map and a fold function. =#
+""" Like map1Fold, but with the function split into a map and a fold function. """
 function map1FoldSplit(inList::List{TI}, inMapFunc::MapFunc, inFoldFunc::FoldFunc, inConstArg::ArgT1, inStartValue::FT)  where {TI, FT, ArgT1}
   local outResult::FT = inStartValue
   local outList::List{Any} = nil
@@ -5000,14 +4997,12 @@ function findMap3(inList::List{T}, inFunc::FuncType, inArg1::ArgT1, inArg2::ArgT
   (outList, outFound)
 end
 
-#= Applies the given function over the list and returns first returned value that is not NONE(). =#
-function findSome(inList::List{T1}, inFunc::FuncType)  where {T1, T2}
-  local outVal::T2
-
-  local retOpt::Option{T2} = NONE()
+""" Applies the given function over the list and returns first returned value that is not NONE(). """
+function findSome(inList::List{T1}, inFunc::FuncType)  where {T1}
+  local outVal
+  local retOpt::Option = NONE()
   local e::T1
   local rest::List{T1} = inList
-
   while isNone(retOpt)
     @match _cons(e, rest) = rest
     retOpt = inFunc(e)
@@ -5023,14 +5018,12 @@ function findSome(inList::List{T1}, inFunc::FuncType)  where {T1, T2}
   outVal
 end
 
-#= Applies the given function with one extra argument over the list and returns first returned value that is not NONE(). =#
-function findSome1(inList::List{T1}, inFunc::FuncType, inArg::Arg)  where {T1, T2, Arg}
-  local outVal::T2
-
-  local retOpt::Option{T2} = NONE()
+""" Applies the given function with one extra argument over the list and returns first returned value that is not NONE(). """
+function findSome1(inList::List{T1}, inFunc::FuncType, inArg::Arg)  where {T1, Arg}
+  local outVal
+  local retOpt = NONE()
   local e::T1
   local rest::List{T1} = inList
-
   while isNone(retOpt)
     @match _cons(e, rest) = rest
     retOpt = inFunc(e, inArg)
@@ -5218,7 +5211,7 @@ function combinationMap1_tail2(inHead::List{TI}, inRest::List{List{TI}}, inMapFu
   outElements
 end
 
-#= Checks if all elements in the lists have equal references =#
+""" Checks if all elements in the lists have equal references """
 function allReferenceEq(inList1::List{T}, inList2::List{T})  where {T}
   local outEqual::Bool
 
@@ -5270,7 +5263,7 @@ function removeEqualPrefix(inList1::List{T1}, inList2::List{T2}, inCompFunc::Com
   (outList1, outList2)
 end
 
-#= Returns true if inList1 is longer than inList2, otherwise false. =#
+""" Returns true if inList1 is longer than inList2, otherwise false. """
 function listIsLonger(inList1::List{T}, inList2::List{T})  where {T}
   local isLonger::Bool
 
@@ -5386,7 +5379,7 @@ function isSorted(inList::List{T}, inFunc::Comp)  where {T}
   b
 end
 
-#= Applies a function to only the elements given by the sorted list of indices. =#
+""" Applies a function to only the elements given by the sorted list of indices. """
 function mapIndices(inList::List{T}, indices::List{ModelicaInteger}, func::MapFunc)  where {T}
   local outList::List{T}
 
