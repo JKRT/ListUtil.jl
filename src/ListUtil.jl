@@ -2970,6 +2970,36 @@ function mapFold(inList::List{TI}, inFunc::FuncType, inArg::FT, ::Type{TO} = Any
   (outList, outArg)
 end
 
+
+function mapFoldRef(inList::List{TI}, inFunc::FuncType, outRefArg::Ref{FT}, ::Type{TO} = Any)  where {TI, FT, TO}
+  local outArg::FT = inArg
+  local outList::List{TO} = nil
+  local res::TO
+  for e in inList
+    res = inFunc(e, outRefArg)
+    outList = _cons(res, outList)
+  end
+  outList = listReverseInPlace(outList)
+  return outList
+end
+
+
+"""
+```mapFoldSO```
+Like mapFold but with a single output.
+"""
+function mapFoldSO(inList::List{TI}, inFunc::FuncType, inArg::FT, ::Type{TO} = Any)  where {TI, FT, TO}
+  local outArg::FT = inArg
+  local outList::List{TO} = nil
+  local res::TO
+  for e in inList
+    res = inFunc(e, outArg)
+    outList = _cons(res, outList)
+  end
+  outList = listReverseInPlace(outList)
+  outList
+end
+
 #= Takes a list, a function, and two extra arguments. The function will be applied
 to each element in the list, and the extra arguments will be passed to the
 function and updated. =#
@@ -3054,9 +3084,9 @@ Takes a list, an extra argument, an extra constant argument, and a function.
 The function will be applied to each element in the list, and the extra
 argument will be passed to the function and updated.
 """
-function map1Fold(inList::List{TI}, inFunc::Function, inConstArg::ArgT1, inArg)  where {TI, ArgT1}
+function map1Fold(inList::List{TI}, inFunc::Function, inConstArg::ArgT1, inArg, TY = Any)  where {TI, ArgT1}
   local outArg = inArg
-  local outList::List{Any} = nil
+  local outList::List{TY} = nil
   local res::Any
   for e in inList
     (res, outArg) = inFunc(e, inConstArg, outArg)
