@@ -6,7 +6,7 @@
 
 List utility helpers for the Julia port of the OpenModelica compiler.
 A Julia translation of the MetaModelica `ListUtil` module: `map`, `fold`,
-`filter`, `filterOnTrue`, `position`, `flatten`, and several hundred more
+`filter`, `filterOnTrue`, `position`, `flatten`, and more
 operations on the immutable cons-list type `List{T}` provided by
 [`MetaModelica.jl`](https://github.com/JKRT/MetaModelica.jl) and
 [`ImmutableList.jl`](https://github.com/JKRT/ImmutableList.jl).
