@@ -802,7 +802,7 @@ function sortedListAllUnique(lst::List{T}, compare::F) where {T, F<:Function}
           nil
         end
 
-        e1 <| rest && e2 <| _  => begin
+        e1 <| (rest && e2 <| _)  => begin
           if compare(e1, e2)
             return allUnique
           end
@@ -967,7 +967,6 @@ function sortIntN(inList::List{<:ModelicaInteger}, inN::ModelicaInteger) ::List{
       outSorted = _cons(i, outSorted)
     end
   end
-  GC.free(a1)
   outSorted
 end
 
@@ -999,7 +998,6 @@ function uniqueIntN(inList::List{<:ModelicaInteger}, inN::ModelicaInteger) ::Lis
     end
     arrayUpdate(arr, i, false)
   end
-  GC.free(arr)
   outList
 end
 
@@ -1063,7 +1061,7 @@ reverseList({{1, 2}, {3, 4, 5}, {6}}) => {{6}, {5, 4, 3}, {2, 1}} =#
 function reverseList(inList::List{List{T}})  where {T}
   local outList::List{List{T}}
 
-  outList = listReverse(listReverse(e) for e in inList)
+  outList = listReverse(list(listReverse(e) for e in inList))
   outList
 end
 
@@ -1375,7 +1373,7 @@ result = {{1, 1}, {1, 3}, {1, 4}, {2, 1}, {2, 3}, {2, 4}} =#
 function product(inList1::List{List{T}}, inList2::List{List{T}})  where {T}
   local outProduct::List{List{T}} = nil
 
-  for e1 in inList1, e2 in inList2
+  for e1 in listReverse(inList1), e2 in listReverse(inList2)
     outProduct = _cons(listAppend(e1, e2), outProduct)
   end
   outProduct
@@ -1523,7 +1521,6 @@ function intersectionIntN(inList1::List{<:ModelicaInteger}, inList2::List{<:Mode
     a = addPos(inList1, a, 1)
     a = addPos(inList2, a, 1)
     outResult = intersectionIntVec(a, inList1)
-    GC.free(a)
   else
     outResult = nil
   end
@@ -1626,7 +1623,6 @@ function setDifferenceIntN(inList1::List{<:ModelicaInteger}, inList2::List{<:Mod
         outDifference = _cons(i, outDifference)
       end
     end
-    GC.free(a)
   end
   outDifference
 end
@@ -1680,7 +1676,6 @@ function unionIntN(inList1::List{<:ModelicaInteger}, inList2::List{<:ModelicaInt
         outUnion = _cons(i, outUnion)
       end
     end
-    GC.free(a)
   end
   outUnion
 end
@@ -1880,7 +1875,7 @@ to each element of the list. The created list will be reversed compared to
 the given list. =#
 function mapReverse(inList::List{TI}, inFunc::F, ::Type{TO} = Any) where {TI, TO, F<:Function}
   local outList::List{TO}
-  outList = listReverse(inFunc(e) for e in inList)
+  outList = listReverse(list(inFunc(e) for e in inList))
   outList
 end
 
@@ -2017,7 +2012,7 @@ be reversed compared to the given list. =#
 function map1Reverse(inList::List{TI}, inMapFunc::F, inArg1::ArgT1, ::Type{TO} = Any) where {TI, TO, ArgT1, F<:Function}
   local outList::List{TO}
 
-  outList = listReverse(inMapFunc(e, inArg1) for e in inList)
+  outList = listReverse(list(inMapFunc(e, inArg1) for e in inList))
   outList
 end
 
@@ -2096,7 +2091,7 @@ be reversed compared to the given list. =#
 function map2Reverse(inList::List{TI}, inFunc::F, inArg1::ArgT1, inArg2::ArgT2, ::Type{TO} = Any) where {TI, ArgT1, ArgT2, TO, F<:Function}
   local outList::List{TO}
 
-  outList = listReverse(inFunc(e, inArg1, inArg2) for e in inList)
+  outList = listReverse(list(inFunc(e, inArg1, inArg2) for e in inList))
   outList
 end
 
@@ -2325,9 +2320,11 @@ end
 into one list. Example (fill2(n) = {n, n}):
 mapFlat({1, 2, 3}, fill2) => {1, 1, 2, 2, 3, 3} =#
 function mapFlat(inList::List{TI}, inMapFunc::F, ::Type{TO} = Any) where {TI, TO, F<:Function}
-  local outList::List{TO}
+  local outList::List{TO} = nil
 
-  outList = listReverse(mapFlatReverse(inList, inMapFunc))
+  for e in listReverse(inList)
+    outList = listAppend(inMapFunc(e), outList)
+  end
   outList
 end
 
@@ -2655,7 +2652,7 @@ Example: mapListReverse({{1, 2}, {3}, {4}}, intString) =>
 function mapListReverse(inListList::List{List{TI}}, inFunc::F) where {TI, F<:Function}
   local outListList::List{List{Any}}
 
-  outListList = list(listReverse(inFunc(e) for e in lst) for lst in inListList)
+  outListList = list(listReverse(list(inFunc(e) for e in lst)) for lst in inListList)
   outListList
 end
 
@@ -3495,7 +3492,7 @@ Example: threadMap({1, 2}, {3, 4}, intAdd) => {2+4, 1+3} =#
 function threadMapReverse(inList1::List{T1}, inList2::List{T2}, inMapFunc::F, ::Type{TO} = Any) where {T1, T2, TO, F<:Function}
   local outList::List{TO}
 
-  outList = listReverse(@do_threaded_for inMapFunc(e1, e2) (e1, e2) (inList1, inList2))
+  outList = listReverse(list(@do_threaded_for inMapFunc(e1, e2) (e1, e2) (inList1, inList2)))
   outList
 end
 
@@ -3606,7 +3603,7 @@ result list will be reversed compared to the input lists. =#
 function threadMap1Reverse(inList1::List{T1}, inList2::List{T2}, inMapFunc::F, inArg1::ArgT1) where {T1, T2, ArgT1, F<:Function}
   local outList::List{Any}
 
-  outList = listReverse(@do_threaded_for inMapFunc(e1, e2, inArg1) (e1, e2) (inList1, inList2))
+  outList = listReverse(list(@do_threaded_for inMapFunc(e1, e2, inArg1) (e1, e2) (inList1, inList2)))
   outList
 end
 
@@ -3650,7 +3647,7 @@ result list will be reversed compared to the input lists. =#
 function threadMap2Reverse(inList1::List{T1}, inList2::List{T2}, inMapFunc::F, inArg1::ArgT1, inArg2::ArgT2) where {T1, T2, ArgT1, ArgT2, F<:Function}
   local outList::List{Any}
 
-  outList = listReverse(@do_threaded_for inMapFunc(e1, e2, inArg1, inArg2) (e1, e2) (inList1, inList2))
+  outList = listReverse(list(@do_threaded_for inMapFunc(e1, e2, inArg1, inArg2) (e1, e2) (inList1, inList2)))
   outList
 end
 
@@ -3700,7 +3697,7 @@ extra arguments that are passed to the mapping function. =#
 function threadMap3Reverse(inList1::List{T1}, inList2::List{T2}, inMapFunc::F, inArg1::ArgT1, inArg2::ArgT2, inArg3::ArgT3) where {T1, T2, ArgT1, ArgT2, ArgT3, F<:Function}
   local outList::List{Any}
 
-  outList = listReverse(@do_threaded_for inMapFunc(e1, e2, inArg1, inArg2, inArg3) (e1, e2) (inList1, inList2))
+  outList = listReverse(list(@do_threaded_for inMapFunc(e1, e2, inArg1, inArg2, inArg3) (e1, e2) (inList1, inList2)))
   outList
 end
 
@@ -4312,7 +4309,7 @@ filter({1, 2, 3, 4, 5}, isEven) => {4, 2} =#
 function filterOnTrueReverse(inList::List{T}, inFilterFunc::F) where {T, F<:Function}
   local outList::List{T}
 
-  outList = listReverse(e for e in inList if inFilterFunc(e))
+  outList = listReverse(list(e for e in inList if inFilterFunc(e)))
   outList
 end
 
@@ -4435,7 +4432,7 @@ function findAndRemove(inList::List{T}, inFunc::F) where {T, F<:Function}
   for e in inList
     if inFunc(e)
       outElement = e
-      delst = DoubleEnded.fromList(nil)
+      delst = DoubleEnded.MutableList{T}()
       rest = inList
       for i in 1:i
         @match _cons(t, rest) = rest
@@ -4464,7 +4461,7 @@ function findAndRemove1(inList::List{T}, inFunc::F, arg1::ArgT1) where {T, ArgT1
   for e in inList
     if inFunc(e, arg1)
       outElement = e
-      delst = DoubleEnded.fromList(nil)
+      delst = DoubleEnded.MutableList{T}()
       rest = inList
       for i in 1:i
         @match _cons(t, rest) = rest
@@ -4617,7 +4614,7 @@ function replaceAt(inElement::T, inPosition::ModelicaInteger #= one-based index 
   local delst::DoubleEnded.MutableList{T}
 
   @match true = inPosition >= 1
-  delst = DoubleEnded.fromList(nil)
+  delst = DoubleEnded.MutableList{T}()
   #=  Shuffle elements from inList to outList until the position is reached.
   =#
   for i in 1:inPosition - 1
@@ -4820,7 +4817,7 @@ function generateReverse(inArg::ArgT1, inFunc::F) where {ArgT1, F<:Function}
   local outList::List = nil
   local cont::Bool
   local arg::ArgT1 = inArg
-  local e::T
+  local e
   while true
     (arg, e, cont) = inFunc(arg)
     if ! cont
@@ -5382,6 +5379,7 @@ function isSorted(inList::List{T}, inFunc::F) where {T, F<:Function}
       b = false
       return b
     end
+    prev = e
   end
   b
 end
